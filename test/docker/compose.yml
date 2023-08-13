@@ -1,0 +1,88 @@
+version: "3.7"
+
+services:
+  postgresql:
+    image: postgres:14-alpine
+    container_name: 'postgresql'
+    ports:
+      - '5435:5432'
+    env_file:
+      - envs/postgresql.env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-U", "test", "-d", "test" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ates-network
+
+  kafka:
+    image: bitnami/kafka:3.4.0
+    hostname: kafka
+    restart: always
+    ports:
+      - '9099:9093'
+    env_file:
+      - ./envs/kafka.env
+    networks:
+      - ates-network
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/opt/bitnami/kafka/bin/kafka-topics.sh", "--bootstrap-server", "127.0.0.1:9002", "--list" ]
+      interval: 10s
+      start_period: 10s
+      timeout: 2s
+      retries: 15
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8081:8080
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
+    networks:
+      - ates-network
+
+  service-template-prepare:
+    build:
+      context: ../../services/service-template
+      dockerfile: Dockerfile
+      target: prepare
+    env_file:
+      - envs/service-template.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - ates-network
+
+  service-template:
+    build:
+      context: ../../services/service-template
+      dockerfile: Dockerfile
+      target: app
+    env_file:
+      - envs/service-template.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      service-template-prepare:
+        condition: service_completed_successfully
+    networks:
+      - ates-network
+    ports:
+      - "8088:8080"
+
+networks:
+  ates-network:
+    driver: bridge

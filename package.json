@@ -1,0 +1,107 @@
+{
+  "name": "@skazska/ates",
+  "version": "0.0.1",
+  "author": "skazska@gmail.com",
+  "description": "lms.tough-dev.school async arch hw",
+  "license": "",
+  "engines": {
+    "node": ">=18.15.0",
+    "npm": ">=9.5.0"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:skazska/ates.git"
+  },
+  "bugs": {
+    "url": "https://github.com/skazska/ates/issues"
+  },
+  "homepage": "https://github.com/skazska/ates#readme",
+  "scripts": {
+    "format": "./node_modules/prettier/bin-prettier.js --write \\\"services/**/*.ts\\\"",
+    "lint": "eslint '*/**/*.ts'",
+    "lint:fix": "eslint '*/**/*.ts' --fix --quiet",
+    "lint:warns": "eslint '*/**/*.ts' --max-warnings 0",
+    "pre-commit": "lint-staged && tsc --noEmit",
+    "test": "npm run test:prepare && npm run test:integration:run && npm run test:cleanup",
+    "test:build": "cd test/docker && docker-compose build",
+    "test:cleanup": "cd test/docker && docker-compose down --remove-orphans",
+    "test:prepare": "npm run test:build && cd test/docker && docker-compose up -d",
+    "test:run": "jest --config ./test/integration/jest.integration.json --verbose --colors --coverage --runInBand"
+  },
+  "dependencies": {
+  },
+  "peerDependencies": {
+  },
+  "devDependencies": {
+    "@types/jest": "29.5.1",
+    "@types/node": "18.15.0",
+    "@typescript-eslint/eslint-plugin": "5.59.7",
+    "@typescript-eslint/parser": "5.59.7",
+    "eslint": "8.41.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-airbnb-typescript": "17.0.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jest": "27.2.1",
+    "eslint-plugin-jsx-a11y": "6.7.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "10.0.0",
+    "jest": "29.5.0",
+    "jest-junit": "16.0.0",
+    "knex": "2.5.1",
+    "lint-staged": "13.2.2",
+    "prettier": "2.8.8",
+    "ts-jest": "29.1.0",
+    "tsc-watch": "6.0.4",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.0.4"
+  },
+  "lint-staged": {
+    "services/**/*.ts": [
+      "prettier --write",
+      "eslint --ext .ts src --fix --quiet",
+      "jest --bail --findRelatedTests"
+    ]
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "./",
+    "testRegex": "test/unit/.*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "diagnostics": true,
+          "ignoreCoverageForAllDecorators": true,
+          "ignoreCoverageForDecorators": true
+        }
+      ]
+    },
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "**/*.{js,ts}",
+      "!**/node_modules/**",
+      "!**/*.spec.{js,ts}"
+    ],
+    "coverageReporters": [
+      "text",
+      "text-summary",
+      "cobertura"
+    ]
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "all"
+  }
+}
