@@ -10,9 +10,21 @@ export class CommOutService {
     console.log('CommOutService.constructor()');
   }
 
-  public cud(payload: EmployeeDTO): void {
+  public created(payload: EmployeeDTO): void {
     console.log(`CommOutService.cud(${JSON.stringify(payload)})`);
 
-    this.kafkaClient.emit(this.employeesCudTopic, payload);
+    this.kafkaClient.emit(this.employeesCudTopic, {
+      action: 'created',
+      payload,
+    });
+  }
+
+  public changed(payload: EmployeeDTO): void {
+    console.log(`CommOutService.cud(${JSON.stringify(payload)})`);
+
+    this.kafkaClient.emit(this.employeesCudTopic, {
+      action: 'changed',
+      payload,
+    });
   }
 }

@@ -10,7 +10,7 @@ export class EmployeeService {
   public async create(newUserDto: NewEmployeeDTO): Promise<EmployeeDTO> {
     const employee = await this.db.createEmployee(newUserDto);
 
-    this.commOutService.cud(employee);
+    this.commOutService.created(employee);
 
     return employee;
   }
