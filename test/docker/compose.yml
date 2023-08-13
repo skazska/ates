@@ -36,7 +36,7 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 8081:8080
+      - 8090:8080
     depends_on:
       - kafka
     environment:
@@ -48,6 +48,40 @@ services:
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
     networks:
       - ates-network
+
+  employees-prepare:
+    build:
+      context: ../../services/employees
+      dockerfile: Dockerfile
+      target: prepare
+    env_file:
+      - envs/employees.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - ates-network
+
+  employees:
+    build:
+      context: ../../services/employees
+      dockerfile: Dockerfile
+      target: app
+    env_file:
+      - envs/employees.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      employees-prepare:
+        condition: service_completed_successfully
+    networks:
+      - ates-network
+    ports:
+      - "8080:8080"
 
 #  service-template-prepare:
 #    build:

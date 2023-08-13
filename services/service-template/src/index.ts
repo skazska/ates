@@ -6,6 +6,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import { ValidationPipe } from '@nestjs/common';
 
 export async function bootstrap(): Promise<void> {
   console.log('bootstrap service-template');
@@ -14,6 +15,8 @@ export async function bootstrap(): Promise<void> {
     AppModule,
     new FastifyAdapter(),
   );
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = app.get<AppConfigService>(AppConfigService);
 
