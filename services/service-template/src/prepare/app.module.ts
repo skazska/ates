@@ -12,15 +12,6 @@ export class AppModule implements OnApplicationBootstrap {
   async onApplicationBootstrap(): Promise<void> {
     console.log('AppModule.onApplicationBootstrap()');
 
-    const schema = this.dbService.knex.schema;
-
-    const hasTable = await schema.hasTable('service-template');
-
-    if (hasTable) return;
-
-    await schema.createTable('service-template', (qb) => {
-      qb.increments('id');
-      qb.string('name');
-    });
+    await this.dbService.init();
   }
 }
