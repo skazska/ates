@@ -1,0 +1,53 @@
+{
+  "name": "@skazska/ates-tasks",
+  "version": "0.0.1",
+  "author": "skazska@gmail.com",
+  "description": "lms.tough-dev.school async arch hw",
+  "license": "",
+  "engines": {
+    "node": ">=18.15.0",
+    "npm": ">=9.5.0"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:skazska/ates.git"
+  },
+  "bugs": {
+    "url": "https://github.com/skazska/ates/issues"
+  },
+  "homepage": "https://github.com/skazska/ates#readme",
+  "scripts": {
+    "build": "rm -rf dist && ./node_modules/typescript/bin/tsc",
+    "clean": "rm package-lock.json && rm -rf node_modules",
+    "format": "./node_modules/prettier/bin-prettier.js --write \"./src/**/*.ts\"",
+    "init": "",
+    "lint": "eslint '*/**/*.ts'",
+    "lint:fix": "eslint '*/**/*.ts' --fix --quiet",
+    "lint:warns": "eslint '*/**/*.ts' --max-warnings 0",
+    "pre-commit": "lint-staged && tsc --noEmit",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {
+    "@nestjs/class-validator": "0.13.4",
+    "@nestjs/class-transformer": "0.4.0",
+    "@nestjs/common": "10.1.3",
+    "@nestjs/config": "3.0.0",
+    "@nestjs/core": "10.1.3",
+    "@nestjs/platform-fastify": "10.1.3",
+    "@nestjs/microservices": "10.1.3",
+    "kafkajs": "2.2.4",
+    "knex": "2.5.1",
+    "pg": "8.11.2"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/node": "18.15.0",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.0.4"
+  }
+}
