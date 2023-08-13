@@ -3,9 +3,15 @@ import { AppConfigModule } from './app-config/app-config.module';
 import { DbModule } from './db/db.module';
 import { CommInModule } from './comm-in/comm-in.module';
 import { CommOutModule } from './comm-out/comm-out.module';
-import { UserModule } from './user/user.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
-  imports: [AppConfigModule, DbModule, CommInModule, CommOutModule, UserModule],
+  imports: [
+    AppConfigModule,
+    DbModule,
+    CommInModule,
+    CommOutModule,
+    EmployeeModule,
+  ],
 })
 export class AppModule {}

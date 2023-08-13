@@ -29,6 +29,7 @@ const kafkaProvider = {
 };
 
 @Module({
+  exports: [CommOutService],
   providers: [CommOutService, kafkaProvider],
 })
 export class CommOutModule {}
