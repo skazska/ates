@@ -83,6 +83,42 @@ services:
     ports:
       - "8080:8080"
 
+  tasks-prepare:
+    build:
+      context: ../../services/tasks
+      dockerfile: Dockerfile
+      target: prepare
+    env_file:
+      - envs/tasks.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    networks:
+      - ates-network
+
+  tasks:
+    build:
+      context: ../../services/tasks
+      dockerfile: Dockerfile
+      target: app
+    env_file:
+      - envs/tasks.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      employees:
+        condition: service_healthy
+      tasks-prepare:
+        condition: service_completed_successfully
+    networks:
+      - ates-network
+    ports:
+      - "8081:8080"
+
 #  service-template-prepare:
 #    build:
 #      context: ../../services/service-template
