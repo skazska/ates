@@ -1,15 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { EmployeeDTO } from '../types/employee';
 
 @Injectable()
 export class CommOutService {
+  private employeesCudTopic = 'employees-cud';
+
   public constructor(@Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka) {
     console.log('CommOutService.constructor()');
   }
 
-  public cud(event: string, payload: Record<string, unknown>): void {
-    console.log(`CommOutService.cud(${event}, ${JSON.stringify(payload)})`);
+  public cud(payload: EmployeeDTO): void {
+    console.log(`CommOutService.cud(${JSON.stringify(payload)})`);
 
-    this.kafkaClient.emit(event, payload);
+    this.kafkaClient.emit(this.employeesCudTopic, payload);
   }
 }

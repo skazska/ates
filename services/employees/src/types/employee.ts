@@ -1,7 +1,7 @@
 import { IsEmail, IsNotEmpty, IsDefined } from '@nestjs/class-validator';
 
 // user DTO
-export class UserDTO {
+export class EmployeeDTO {
   @IsDefined()
   @IsNotEmpty()
   @IsEmail()
@@ -21,7 +21,7 @@ export class UserDTO {
 }
 
 // new user DTO
-export class NewUserDTO {
+export class NewEmployeeDTO {
   @IsDefined()
   @IsNotEmpty()
   @IsEmail()

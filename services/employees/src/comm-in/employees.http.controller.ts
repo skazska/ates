@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NewUserDTO, UserDTO } from '../types/user';
-import { UserService } from '../user/user.service';
+import { NewEmployeeDTO, EmployeeDTO } from '../types/employee';
+import { EmployeeService } from '../employee/employee.service';
 
 /**
  * HttpController contains the HTTP endpoints for this service.
@@ -10,22 +10,22 @@ import { UserService } from '../user/user.service';
  */
 @Controller('users')
 export class EmployeesHttpController {
-  public constructor(private userService: UserService) {
+  public constructor(private userService: EmployeeService) {
     console.log('HttpController.constructor()');
   }
 
   @Post()
-  public async create(@Body() newUser: NewUserDTO): Promise<UserDTO> {
+  public async create(@Body() newUser: NewEmployeeDTO): Promise<EmployeeDTO> {
     return this.userService.create(newUser);
   }
 
   @Get()
-  public async get(): Promise<UserDTO[]> {
+  public async get(): Promise<EmployeeDTO[]> {
     return this.userService.get();
   }
 
   @Get(':uid')
-  public async getUser(@Query('uid') uid: string): Promise<UserDTO[]> {
+  public async getUser(@Query('uid') uid: string): Promise<EmployeeDTO[]> {
     return this.userService.get(uid);
   }
 }

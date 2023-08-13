@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../app-config/app-config.service';
 import knex, { Knex } from 'knex';
-import { NewUserDTO, UserDTO } from '../types/user';
+import { NewEmployeeDTO, EmployeeDTO } from '../types/employee';
 import { plainToClass } from '@nestjs/class-transformer';
 
 @Injectable()
@@ -40,13 +40,13 @@ export class DbService {
     console.log('table created', this.schemaName);
   }
 
-  public async createUser(user: NewUserDTO): Promise<UserDTO> {
+  public async createEmployee(user: NewEmployeeDTO): Promise<EmployeeDTO> {
     const result = await this.q(this.employees).insert(user).returning('*');
 
-    return plainToClass(UserDTO, result[0]);
+    return plainToClass(EmployeeDTO, result[0]);
   }
 
-  public async getUsers(uid?: string): Promise<UserDTO[]> {
+  public async getEmployee(uid?: string): Promise<EmployeeDTO[]> {
     const q = this.q(this.employees).select(['email', 'name', 'uid']);
 
     if (uid) {
@@ -56,7 +56,7 @@ export class DbService {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const result: unknown[] = await q;
 
-    return plainToClass(UserDTO, result);
+    return plainToClass(EmployeeDTO, result);
   }
 
   protected q(table?: string): Knex.QueryBuilder {
