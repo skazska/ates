@@ -5,7 +5,7 @@ services:
     image: postgres:14-alpine
     container_name: 'postgresql'
     ports:
-      - '5435:5432'
+      - '5432:5432'
     env_file:
       - envs/postgresql.env
     healthcheck:
@@ -49,39 +49,37 @@ services:
     networks:
       - ates-network
 
-  service-template-prepare:
-    build:
-      context: ../../services/service-template
-      dockerfile: Dockerfile
-      target: prepare
-    env_file:
-      - envs/service-template.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    networks:
-      - ates-network
-
-  service-template:
-    build:
-      context: ../../services/service-template
-      dockerfile: Dockerfile
-      target: app
-    env_file:
-      - envs/service-template.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      service-template-prepare:
-        condition: service_completed_successfully
-    networks:
-      - ates-network
-    ports:
-      - "8088:8080"
+#  service-template-prepare:
+#    build:
+#      context: ../../services/service-template
+#      dockerfile: Dockerfile
+#      target: prepare
+#    env_file:
+#      - envs/service-template.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    networks:
+#      - ates-network
+#
+#  service-template:
+#    build:
+#      context: ../../services/service-template
+#      dockerfile: Dockerfile
+#      target: app
+#    env_file:
+#      - envs/service-template.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#      service-template-prepare:
+#        condition: service_completed_successfully
+#    networks:
+#      - ates-network
 
 networks:
   ates-network:
