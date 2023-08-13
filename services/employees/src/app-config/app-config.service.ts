@@ -30,6 +30,6 @@ export class AppConfigService {
   }
 
   public get serviceName(): string {
-    return 'service-template';
+    return 'employees';
   }
 }

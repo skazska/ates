@@ -6,10 +6,10 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common/pipes';
 
 export async function bootstrap(): Promise<void> {
-  console.log('bootstrap service-template');
+  console.log('bootstrap employees');
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

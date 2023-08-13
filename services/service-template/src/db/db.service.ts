@@ -8,10 +8,6 @@ export class DbService {
 
   private schemaName = 'service-template';
 
-  protected get q(): Knex.QueryBuilder {
-    return this._knex.withSchema(this.schemaName);
-  }
-
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
   }
@@ -32,5 +28,9 @@ export class DbService {
     });
 
     console.log('table created', this.schemaName);
+  }
+
+  protected q(table?: string): Knex.QueryBuilder {
+    return this._knex(table).withSchema(this.schemaName);
   }
 }
