@@ -1,0 +1,30 @@
+overrides: [
+  {
+    extends: [
+      'airbnb-typescript/base',
+      'eslint:recommended',
+      'plugin:@typescript-eslint/recommended',
+      'plugin:@typescript-eslint/recommended-requiring-type-checking',
+      'plugin:import/errors',
+      'plugin:import/typescript',
+      'plugin:import/warnings',
+      'prettier',
+      'plugin:prettier/recommended',
+    ],
+    plugins: [
+      '@typescript-eslint',
+      'jest',
+      'simple-import-sort',
+    ],
+    files: ['*.ts'],
+    parser: '@typescript-eslint/parser',
+    parserOptions: {
+      include: ['src/**/*.ts', 'test/**/*.ts', 'typings/**/*.ts'],
+      project: './tsconfig.json',
+    },
+    rules: {
+      "complexity": ["error", 7],
+    }
+  },
+]
+root: true
