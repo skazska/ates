@@ -240,6 +240,12 @@ services:
 #      - npm:/home/node/.npm
 #    networks:
 #      - ates-network
+#    healthcheck:
+#      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+#      interval: 5s
+#      retries: 10
+#      start_period: 10s
+#      timeout: 3s
 
 networks:
   ates-network:
