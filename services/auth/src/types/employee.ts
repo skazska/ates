@@ -41,6 +41,10 @@ export class NewEmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  password!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
   @IsEnum(['manager', 'employee'])
   role!: string;
 }

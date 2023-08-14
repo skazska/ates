@@ -3,8 +3,6 @@ import { DbService } from '../db/db.service';
 import { NewEmployeeDTO, EmployeeDTO } from '../types/employee';
 import { CommOutService } from '../comm-out/comm-out.service';
 import { CommOutCmdService } from '../comm-out/comm-out-cmd.service';
-import { plainToClass } from '@nestjs/class-transformer';
-import { LoginDTO } from '../types/login';
 
 @Injectable()
 export class EmployeeService {
@@ -18,16 +16,7 @@ export class EmployeeService {
     const employee = await this.db.tRun(async () => {
       const created = await this.db.createEmployee(newUserDto);
 
-      // {
-      //   uid: created.uid,
-      //     email: created.email,
-      //   password: newUserDto.password,
-      //   role: created.role,
-      // }
-
-      this.commOutCmd.createLogin(
-        plainToClass(LoginDTO, { ...created, password: newUserDto.password }),
-      );
+      this.commOutCmd.created(created);
 
       return created;
     });
