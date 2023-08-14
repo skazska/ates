@@ -28,53 +28,14 @@ export class EmployeeDTO {
   uid!: string;
 }
 
-// new employee DTO
-export class NewEmployeeDTO {
+// employee cud DTO
+export class EmployeeCudDTO {
   @IsDefined()
   @IsNotEmpty()
-  @IsEmail()
-  email!: string;
+  @IsEnum(['created', 'updated', 'deleted'])
+  action!: string;
 
   @IsDefined()
   @IsNotEmpty()
-  name!: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  password!: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
-  role!: string;
-}
-
-// update employee DTO
-export class UpdateEmployeeDTO {
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEmail()
-  email?: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  name?: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
-  role?: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsUUID()
-  uid!: string;
-}
-
-// delete employee DTO
-export class DeleteEmployeeDTO {
-  @IsDefined()
-  @IsNotEmpty()
-  @IsUUID()
-  uid!: string;
+  payload!: EmployeeDTO;
 }

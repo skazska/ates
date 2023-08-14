@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../app-config/app-config.service';
 import knex, { Knex } from 'knex';
+import { LoginDTO } from '../types/login';
+import { plainToClass } from '@nestjs/class-transformer';
 
 @Injectable()
 export class DbService {
@@ -29,6 +31,12 @@ export class DbService {
     });
 
     console.log('table created', this.schemaName);
+  }
+
+  public async createLogin(loginDto: LoginDTO): Promise<LoginDTO> {
+    const login = await this.q().insert(loginDto).returning('*');
+
+    return plainToClass(LoginDTO, login[0]);
   }
 
   public async tRun<X>(fn: () => Promise<X>): Promise<X> {
