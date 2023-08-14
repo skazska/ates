@@ -13,11 +13,11 @@ export class EmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  password!: string;
+  uid!: string;
 
   @IsDefined()
   @IsNotEmpty()
-  uid!: string;
+  role!: string;
 }
 
 // new user DTO
@@ -34,4 +34,8 @@ export class NewEmployeeDTO {
   @IsDefined()
   @IsNotEmpty()
   password!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  role!: string;
 }

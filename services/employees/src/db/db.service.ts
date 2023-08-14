@@ -27,7 +27,7 @@ export class DbService {
     schema = schema.withSchema(this.schemaName);
     await schema.dropTableIfExists(this.employees);
 
-    await schema.createTable('employees', (qb) => {
+    await schema.createTable(this.employees, (qb) => {
       qb.uuid('uid')
         .primary()
         .notNullable()
@@ -41,15 +41,16 @@ export class DbService {
   }
 
   public async createEmployee(user: NewEmployeeDTO): Promise<EmployeeDTO> {
-    const result = await this.q(this.employees).insert(user).returning('*');
+    const result = await this.q()
+      .insert(user)
+      .into(this.employees)
+      .returning('*');
 
     return plainToClass(EmployeeDTO, result[0]);
   }
 
   public async getEmployee(uid?: string): Promise<EmployeeDTO[]> {
-    const q = this.q()
-      .select(['email', 'name', 'uid'])
-      .from(this.employees);
+    const q = this.q().select(['email', 'name', 'uid']).from(this.employees);
 
     if (uid) {
       void q.where('uid', uid);
