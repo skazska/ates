@@ -27,13 +27,16 @@ export async function bootstrap(): Promise<void> {
         clientId: config.serviceName,
         retry: config.kafkaRetry,
       },
-      // consumer: { groupId },
+      consumer: {
+        groupId: config.serviceName,
+      },
       parser: { keepBinary: true },
       subscribe: { fromBeginning: true },
     },
     transport: Transport.KAFKA,
   });
 
+  await app.startAllMicroservices();
   await app.init();
 
   await app.listen(8080, '0.0.0.0', (err, address) => {

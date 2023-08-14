@@ -42,10 +42,9 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
+#      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
     networks:
       - ates-network
 
@@ -94,7 +93,7 @@ services:
     healthcheck:
       test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
       interval: 5s
-      retries: 3
+      retries: 10
       start_period: 10s
       timeout: 3s
 
@@ -143,8 +142,8 @@ services:
     healthcheck:
       test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
       interval: 5s
-      retries: 3
-      start_period: 5s
+      retries: 10
+      start_period: 10s
       timeout: 3s
     ports:
       - "8081:8080"
@@ -196,8 +195,8 @@ services:
     healthcheck:
       test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
       interval: 5s
-      retries: 3
-      start_period: 5s
+      retries: 10
+      start_period: 10s
       timeout: 3s
     ports:
       - "8082:8080"
@@ -241,6 +240,12 @@ services:
 #      - npm:/home/node/.npm
 #    networks:
 #      - ates-network
+#    healthcheck:
+#      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+#      interval: 5s
+#      retries: 10
+#      start_period: 10s
+#      timeout: 3s
 
 networks:
   ates-network:

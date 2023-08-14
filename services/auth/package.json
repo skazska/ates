@@ -49,6 +49,7 @@
   "peerDependencies": {},
   "devDependencies": {
     "@types/node": "18.15.0",
+    "@types/validator":  "13.11.1",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.0.4"
   }
