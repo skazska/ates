@@ -82,6 +82,8 @@ services:
         condition: service_healthy
       auth-prepare:
         condition: service_completed_successfully
+      employees:
+        condition: service_healthy
     tmpfs:
       - /tmp
     volumes:
@@ -128,8 +130,6 @@ services:
       postgresql:
         condition: service_healthy
       kafka:
-        condition: service_healthy
-      auth:
         condition: service_healthy
       employees-prepare:
         condition: service_completed_successfully
