@@ -7,6 +7,7 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { CommOutCmdService } from './comm-out-cmd.service';
+import { Admin, Kafka } from 'kafkajs';
 
 const kafkaProvider = {
   inject: [AppConfigService],
@@ -31,9 +32,31 @@ const kafkaProvider = {
   },
 };
 
+const kafkaAdminProvider = {
+  inject: [AppConfigService],
+  provide: 'KAFKA_ADMIN',
+  useFactory: async (configService: AppConfigService): Promise<Admin> => {
+    const kafka = new Kafka({
+      brokers: configService.kafkaBrokers,
+      retry: configService.kafkaRetry,
+    });
+
+    const admin = kafka.admin();
+
+    await admin.connect();
+
+    return admin;
+  },
+};
+
 @Global()
 @Module({
   exports: [CommOutService, CommOutCmdService],
-  providers: [CommOutService, CommOutCmdService, kafkaProvider],
+  providers: [
+    CommOutService,
+    CommOutCmdService,
+    kafkaProvider,
+    kafkaAdminProvider,
+  ],
 })
 export class CommOutModule {}
