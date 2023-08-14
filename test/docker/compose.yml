@@ -42,10 +42,9 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
-      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
+#      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
     networks:
       - ates-network
 
