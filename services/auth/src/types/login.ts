@@ -8,6 +8,10 @@ export class LoginDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  name!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
   password!: string;
 
   @IsDefined()

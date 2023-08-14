@@ -12,6 +12,7 @@ export class LoginService {
     return this.db.tRun(async () => {
       const created = await this.db.createLogin({
         email: employee.email,
+        name: employee.name,
         password: this.getHashedPassword(''),
         role: employee.role,
         uid: employee.uid,

@@ -44,14 +44,10 @@ export class CommOutService {
     const topics = toCreate.filter((t) => !existingTopics.includes(t));
 
     if (topics.length > 0) {
-      const success = await admin.createTopics({
+      await admin.createTopics({
         topics: topics.map((t) => ({ topic: t })),
         waitForLeaders: true,
       });
-
-      if (!success) {
-        throw new Error('Failed to create topics');
-      }
 
       console.log('Topics created', topics);
     }
