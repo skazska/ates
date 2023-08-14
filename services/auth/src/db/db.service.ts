@@ -10,6 +10,8 @@ export class DbService {
 
   private schemaName = 'auth';
 
+  private logins = 'logins';
+
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
   }
@@ -23,14 +25,26 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
-    await schema.dropTableIfExists('auth');
+    await schema.dropTableIfExists(this.logins);
 
-    await schema.createTable('auth', (qb) => {
-      qb.increments('id');
-      qb.string('name');
+    await schema.createTable(this.logins, (qb) => {
+      qb.uuid('uuid').primary().defaultTo(this._knex.raw('uuid_generate_v4()'));
+      qb.string('name').notNullable();
+      qb.string('email').notNullable();
+      qb.string('password').notNullable();
+      qb.string('role').notNullable();
     });
 
-    console.log('table created', this.schemaName);
+    console.log('table created', this.logins);
+
+    await this.q()
+      .insert({
+        email: 'admin@admin.admin',
+        name: 'admin',
+        role: 'admin',
+        password: '',
+      })
+      .into(this.logins);
   }
 
   public async createLogin(loginDto: LoginDTO): Promise<LoginDTO> {

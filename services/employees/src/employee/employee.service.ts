@@ -11,7 +11,7 @@ export class EmployeeService {
     const employee = await this.db.tRun(async () => {
       const created = await this.db.createEmployee(newUserDto);
 
-      this.commOutService.created(employee);
+      this.commOutService.created(created);
 
       return created;
     });
