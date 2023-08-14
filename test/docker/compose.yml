@@ -21,7 +21,7 @@ services:
     hostname: kafka
     restart: always
     ports:
-      - '9099:9093'
+      - '9093:9093'
     env_file:
       - ./envs/kafka.env
     networks:

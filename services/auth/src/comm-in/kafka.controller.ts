@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { LoginService } from '../login/login.service';
-import { EventPattern, Transport } from '@nestjs/microservices';
+import { EventPattern, Payload, Transport } from '@nestjs/microservices';
 import { EmployeeCudDTO } from '../types/employee';
 
 @Controller()
@@ -14,7 +14,7 @@ export class KafkaController {
    */
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   @EventPattern('employees-cud', Transport.KAFKA)
-  public async created(payload: EmployeeCudDTO): Promise<void> {
+  public async created(@Payload() payload: EmployeeCudDTO): Promise<void> {
     console.log(`KafkaController.created(${JSON.stringify(payload)})`);
 
     const { action, payload: employee } = payload;

@@ -48,7 +48,10 @@ export class DbService {
   }
 
   public async createLogin(loginDto: LoginDTO): Promise<LoginDTO> {
-    const login = await this.q().insert(loginDto).returning('*');
+    const login = await this.q()
+      .into(this.logins)
+      .insert(loginDto)
+      .returning('*');
 
     return plainToClass(LoginDTO, login[0]);
   }
