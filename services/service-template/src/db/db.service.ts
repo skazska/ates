@@ -13,6 +13,7 @@ export class DbService {
   }
 
   public async init(): Promise<void> {
+    await this._knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     let schema = this._knex.schema;
     await schema.dropSchemaIfExists(this.schemaName, true);
     await schema.createSchemaIfNotExists(this.schemaName);
