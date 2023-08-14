@@ -6,6 +6,7 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
+import { CommOutCmdService } from './comm-out-cmd.service';
 
 const kafkaProvider = {
   inject: [AppConfigService],
@@ -32,7 +33,7 @@ const kafkaProvider = {
 
 @Global()
 @Module({
-  exports: [CommOutService],
-  providers: [CommOutService, kafkaProvider],
+  exports: [CommOutService, CommOutCmdService],
+  providers: [CommOutService, CommOutCmdService, kafkaProvider],
 })
 export class CommOutModule {}

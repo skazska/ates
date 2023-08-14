@@ -6,13 +6,12 @@ import {
   ClientProxyFactory,
   Transport,
 } from '@nestjs/microservices';
+import { CommOutCmdService } from './comm-out-cmd.service';
 
 const kafkaProvider = {
   inject: [AppConfigService],
   provide: 'KAFKA_CLIENT',
   useFactory: async (configService: AppConfigService): Promise<ClientKafka> => {
-    console.log(configService.kafkaBrokers);
-
     const client = ClientProxyFactory.create({
       options: {
         client: {
@@ -34,7 +33,7 @@ const kafkaProvider = {
 
 @Global()
 @Module({
-  exports: [CommOutService],
-  providers: [CommOutService, kafkaProvider],
+  exports: [CommOutService, CommOutCmdService],
+  providers: [CommOutService, CommOutCmdService, kafkaProvider],
 })
 export class CommOutModule {}
