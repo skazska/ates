@@ -25,11 +25,7 @@ export async function bootstrap(): Promise<void> {
       client: {
         brokers: config.kafkaBrokers,
         clientId: config.serviceName,
-        retry: {
-          initialRetryTime: 500,
-          maxRetryTime: 5000,
-          retries: Number.POSITIVE_INFINITY,
-        },
+        retry: config.kafkaRetry,
       },
       // consumer: { groupId },
       parser: { keepBinary: true },

@@ -28,7 +28,7 @@ export class AppConfigService {
         maxRetryTime: 5000,
         retries: 100,
       },
-      serviceName: 'tasks',
+      serviceName: 'auth',
     };
 
     assert(this.config.dbUrl, 'DB_URL is not set');

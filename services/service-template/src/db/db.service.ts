@@ -30,7 +30,25 @@ export class DbService {
     console.log('table created', this.schemaName);
   }
 
-  protected q(table?: string): Knex.QueryBuilder {
-    return this._knex(table).withSchema(this.schemaName);
+  public async tRun<X>(fn: () => Promise<X>): Promise<X> {
+    const trx = await this.trx();
+    try {
+      const result = await fn();
+      await trx.commit();
+      return result;
+    } catch (err) {
+      await trx.rollback();
+      throw err;
+    }
+  }
+
+  protected trx(): Promise<Knex.Transaction> {
+    return this._knex.transaction();
+  }
+
+  protected q(trx?: Knex.Transaction): Knex.QueryBuilder {
+    return trx
+      ? trx.withSchema(this.schemaName)
+      : this._knex().withSchema(this.schemaName);
   }
 }

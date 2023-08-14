@@ -47,7 +47,9 @@ export class DbService {
   }
 
   public async getEmployee(uid?: string): Promise<EmployeeDTO[]> {
-    const q = this.q(this.employees).select(['email', 'name', 'uid']);
+    const q = this.q()
+      .select(['email', 'name', 'uid'])
+      .from(this.employees);
 
     if (uid) {
       void q.where('uid', uid);
@@ -59,7 +61,25 @@ export class DbService {
     return plainToClass(EmployeeDTO, result);
   }
 
-  protected q(table?: string): Knex.QueryBuilder {
-    return this._knex(table).withSchema(this.schemaName);
+  public async tRun<X>(fn: () => Promise<X>): Promise<X> {
+    const trx = await this.trx();
+    try {
+      const result = await fn();
+      await trx.commit();
+      return result;
+    } catch (err) {
+      await trx.rollback();
+      throw err;
+    }
+  }
+
+  protected trx(): Promise<Knex.Transaction> {
+    return this._knex.transaction();
+  }
+
+  protected q(trx?: Knex.Transaction): Knex.QueryBuilder {
+    return trx
+      ? trx.withSchema(this.schemaName)
+      : this._knex().withSchema(this.schemaName);
   }
 }
