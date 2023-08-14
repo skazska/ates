@@ -5,9 +5,9 @@ import { ClientKafka } from '@nestjs/microservices';
 export class CommOutService {
   private cudTopic = 'employees-cud';
 
-  public constructor(@Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka) {
-    console.log('CommOutService.constructor()');
-  }
+  public constructor(
+    @Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka,
+  ) {}
 
   public created(payload: string): void {
     this.kafkaClient.emit(this.cudTopic, {
@@ -24,8 +24,6 @@ export class CommOutService {
   }
 
   public updated(payload: string): void {
-    console.log(`CommOutService.cud(${JSON.stringify(payload)})`);
-
     this.kafkaClient.emit(this.cudTopic, {
       action: 'changed',
       payload,

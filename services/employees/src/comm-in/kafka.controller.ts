@@ -1,4 +1,4 @@
 import { Controller } from '@nestjs/common';
 
-@Controller('kafka')
+@Controller()
 export class KafkaController {}

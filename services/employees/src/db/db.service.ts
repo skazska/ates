@@ -8,11 +8,19 @@ export class DbService {
 
   private schemaName = 'employees';
 
+  private employees = 'employees';
+
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
   }
 
   public async init(): Promise<void> {
+    try {
+      await this._knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
+    } catch (e) {
+      console.error(e);
+    }
+
     let schema = this._knex.schema;
     await schema.dropSchemaIfExists(this.schemaName, true);
     await schema.createSchemaIfNotExists(this.schemaName);
@@ -20,9 +28,9 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
-    await schema.dropTableIfExists('employees');
+    await schema.dropTableIfExists(this.employees);
 
-    await schema.createTable('employees', (qb) => {
+    await schema.createTable(this.employees, (qb) => {
       qb.increments('id');
       qb.string('name');
     });

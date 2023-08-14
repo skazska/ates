@@ -30,7 +30,6 @@ export async function bootstrap(): Promise<void> {
       consumer: {
         groupId: config.serviceName,
       },
-      parser: { keepBinary: true },
       subscribe: { fromBeginning: true },
     },
     transport: Transport.KAFKA,
