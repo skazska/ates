@@ -24,6 +24,7 @@ export async function bootstrap(): Promise<void> {
     options: {
       client: {
         brokers: config.kafkaBrokers,
+        groupId: config.serviceName,
         clientId: config.serviceName,
         retry: config.kafkaRetry,
       },

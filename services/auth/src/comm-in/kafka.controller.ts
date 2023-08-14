@@ -3,7 +3,7 @@ import { LoginService } from '../login/login.service';
 import { EventPattern, Transport } from '@nestjs/microservices';
 import { EmployeeCudDTO } from '../types/employee';
 
-@Controller('kafka')
+@Controller()
 export class KafkaController {
   public constructor(private login: LoginService) {
     console.log('KafkaController created');
