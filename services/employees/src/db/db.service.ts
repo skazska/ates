@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../app-config/app-config.service';
 import knex, { Knex } from 'knex';
-import { NewEmployeeDTO, EmployeeDTO } from '../types/employee';
+import {
+  NewEmployeeDTO,
+  EmployeeDTO,
+  UpdateEmployeeDTO,
+} from '../types/employee';
 import { plainToClass } from '@nestjs/class-transformer';
 
 @Injectable()
@@ -34,16 +38,45 @@ export class DbService {
         .defaultTo(this._knex.raw('uuid_generate_v4()'));
       qb.string('name').notNullable();
       qb.string('email').notNullable();
-      qb.string('password').notNullable();
+      qb.string('role').notNullable();
     });
 
     console.log('table created', this.schemaName);
   }
 
-  public async createEmployee(user: NewEmployeeDTO): Promise<EmployeeDTO> {
+  public async createEmployee(
+    employeeDTO: NewEmployeeDTO,
+  ): Promise<EmployeeDTO> {
+    const rec: Record<string, unknown> = { ...employeeDTO };
+    delete rec.password;
+
     const result = await this.q()
-      .insert(user)
+      .insert(employeeDTO)
       .into(this.employees)
+      .returning('*');
+
+    return plainToClass(EmployeeDTO, result[0]);
+  }
+
+  public async updateEmployee(
+    employeeDTO: UpdateEmployeeDTO,
+  ): Promise<EmployeeDTO> {
+    const { uid, ...rec } = employeeDTO;
+
+    const result = await this.q()
+      .update(rec)
+      .from(this.employees)
+      .where('uid', uid)
+      .returning('*');
+
+    return plainToClass(EmployeeDTO, result[0]);
+  }
+
+  public async deleteEmployee(uid: string): Promise<EmployeeDTO> {
+    const result = await this.q()
+      .delete()
+      .from(this.employees)
+      .where('uid', uid)
       .returning('*');
 
     return plainToClass(EmployeeDTO, result[0]);

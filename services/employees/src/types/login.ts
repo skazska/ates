@@ -1,4 +1,4 @@
-import { IsDefined, IsNotEmpty } from '@nestjs/class-validator';
+import { IsDefined, IsEnum, IsNotEmpty } from '@nestjs/class-validator';
 
 // auth DTO
 export class LoginDTO {
@@ -12,5 +12,6 @@ export class LoginDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsEnum(['manager', 'user'])
   role!: string;
 }

@@ -1,6 +1,12 @@
-import { IsEmail, IsNotEmpty, IsDefined } from '@nestjs/class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsDefined,
+  IsEnum,
+  IsUUID,
+} from '@nestjs/class-validator';
 
-// user DTO
+// employee DTO
 export class EmployeeDTO {
   @IsDefined()
   @IsNotEmpty()
@@ -13,14 +19,16 @@ export class EmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  uid!: string;
+  @IsEnum(['manager', 'employee'])
+  role!: string;
 
   @IsDefined()
   @IsNotEmpty()
-  role!: string;
+  @IsUUID()
+  uid!: string;
 }
 
-// new user DTO
+// new employee DTO
 export class NewEmployeeDTO {
   @IsDefined()
   @IsNotEmpty()
@@ -37,5 +45,36 @@ export class NewEmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsEnum(['manager', 'employee'])
   role!: string;
+}
+
+// update employee DTO
+export class UpdateEmployeeDTO {
+  @IsDefined()
+  @IsNotEmpty()
+  @IsEmail()
+  email?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  name?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsEnum(['manager', 'employee'])
+  role?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsUUID()
+  uid!: string;
+}
+
+// delete employee DTO
+export class DeleteEmployeeDTO {
+  @IsDefined()
+  @IsNotEmpty()
+  @IsUUID()
+  uid!: string;
 }

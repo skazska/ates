@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { KafkaController } from './kafka.controller';
 import { HttpController } from './http.controller';
+import { EmployeesHttpController } from './employees.http.controller';
 
 @Module({
-  controllers: [HttpController, KafkaController],
+  controllers: [EmployeesHttpController, HttpController, KafkaController],
 })
 export class CommInModule {}
