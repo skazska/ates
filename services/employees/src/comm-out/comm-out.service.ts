@@ -3,7 +3,7 @@ import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
 export class CommOutService {
-  private cudTopic = 'tasks-cud';
+  private cudTopic = 'employees-cud';
 
   public constructor(@Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka) {
     console.log('CommOutService.constructor()');

@@ -49,6 +49,55 @@ services:
     networks:
       - ates-network
 
+  auth-prepare:
+    build:
+      context: ../../services/auth
+      dockerfile: Dockerfile
+      target: prepare
+    env_file:
+      - envs/auth.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
+    networks:
+      - ates-network
+
+  auth:
+    build:
+      context: ../../services/auth
+      dockerfile: Dockerfile
+      target: app
+    container_name: 'auth'
+    env_file:
+      - envs/auth.env
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      auth-prepare:
+        condition: service_completed_successfully
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
+    networks:
+      - ates-network
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+      interval: 5s
+      retries: 3
+      start_period: 10s
+      timeout: 3s
+
   employees-prepare:
     build:
       context: ../../services/employees
@@ -61,6 +110,10 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
     networks:
       - ates-network
 
@@ -69,6 +122,7 @@ services:
       context: ../../services/employees
       dockerfile: Dockerfile
       target: app
+    container_name: 'employees'
     env_file:
       - envs/employees.env
     depends_on:
@@ -76,12 +130,24 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      auth:
+        condition: service_healthy
       employees-prepare:
         condition: service_completed_successfully
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
     networks:
       - ates-network
+    healthcheck:
+      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+      interval: 5s
+      retries: 3
+      start_period: 5s
+      timeout: 3s
     ports:
-      - "8080:8080"
+      - "8081:8080"
 
   tasks-prepare:
     build:
@@ -95,6 +161,10 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
     networks:
       - ates-network
 
@@ -103,6 +173,7 @@ services:
       context: ../../services/tasks
       dockerfile: Dockerfile
       target: app
+    container_name: 'tasks'
     env_file:
       - envs/tasks.env
     depends_on:
@@ -110,14 +181,26 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      auth:
+        condition: service_healthy
       employees:
         condition: service_healthy
       tasks-prepare:
         condition: service_completed_successfully
+    tmpfs:
+      - /tmp
+    volumes:
+      - npm:/home/node/.npm
     networks:
       - ates-network
+    healthcheck:
+      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+      interval: 5s
+      retries: 3
+      start_period: 5s
+      timeout: 3s
     ports:
-      - "8081:8080"
+      - "8082:8080"
 
 #  service-template-prepare:
 #    build:
@@ -131,6 +214,10 @@ services:
 #        condition: service_healthy
 #      kafka:
 #        condition: service_healthy
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
 #    networks:
 #      - ates-network
 #
@@ -148,9 +235,22 @@ services:
 #        condition: service_healthy
 #      service-template-prepare:
 #        condition: service_completed_successfully
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
 #    networks:
 #      - ates-network
 
 networks:
   ates-network:
     driver: bridge
+
+volumes:
+  npm:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ~/.npm
+

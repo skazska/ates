@@ -6,7 +6,7 @@ import knex, { Knex } from 'knex';
 export class DbService {
   private _knex: Knex;
 
-  private schemaName = 'tasks';
+  private schemaName = 'auth';
 
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
@@ -20,9 +20,9 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
-    await schema.dropTableIfExists('tasks');
+    await schema.dropTableIfExists('auth');
 
-    await schema.createTable('tasks', (qb) => {
+    await schema.createTable('auth', (qb) => {
       qb.increments('id');
       qb.string('name');
     });

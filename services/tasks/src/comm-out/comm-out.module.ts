@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CommOutService } from './comm-out.service';
 import { AppConfigService } from '../app-config/app-config.service';
 import {
@@ -17,7 +17,9 @@ const kafkaProvider = {
           clientId: configService.serviceName,
           brokers: configService.kafkaBrokers,
         },
-        producer: {},
+        producer: {
+          retry: configService.kafkaRetry,
+        },
       },
       transport: Transport.KAFKA,
     });
@@ -28,6 +30,7 @@ const kafkaProvider = {
   },
 };
 
+@Global()
 @Module({
   exports: [CommOutService],
   providers: [CommOutService, kafkaProvider],

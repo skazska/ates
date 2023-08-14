@@ -9,7 +9,7 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 
 export async function bootstrap(): Promise<void> {
-  console.log('bootstrap service-template');
+  console.log('bootstrap auth');
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

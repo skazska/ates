@@ -11,6 +11,8 @@ const kafkaProvider = {
   inject: [AppConfigService],
   provide: 'KAFKA_CLIENT',
   useFactory: async (configService: AppConfigService): Promise<ClientKafka> => {
+    console.log(configService.kafkaBrokers);
+
     const client = ClientProxyFactory.create({
       options: {
         client: {
