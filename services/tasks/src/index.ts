@@ -36,6 +36,7 @@ export async function bootstrap(): Promise<void> {
     transport: Transport.KAFKA,
   });
 
+  await app.startAllMicroservices();
   await app.init();
 
   await app.listen(8080, '0.0.0.0', (err, address) => {
