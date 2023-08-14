@@ -33,7 +33,7 @@ export class DbService {
     await schema.dropTableIfExists(this.logins);
 
     await schema.createTable(this.logins, (qb) => {
-      qb.uuid('uuid').primary().defaultTo(this._knex.raw('uuid_generate_v4()'));
+      qb.uuid('uid').primary().defaultTo(this._knex.raw('uuid_generate_v4()'));
       qb.string('name').notNullable();
       qb.string('email').notNullable();
       qb.string('password').notNullable();
