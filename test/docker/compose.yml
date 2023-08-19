@@ -4,28 +4,28 @@ services:
   postgresql:
     image: postgres:14-alpine
     container_name: 'postgresql'
-    ports:
-      - '5432:5432'
     env_file:
       - envs/postgresql.env
+    networks:
+      - ates-network
+    ports:
+      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready", "-U", "test", "-d", "test" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - ates-network
 
   kafka:
     image: bitnami/kafka:3.4.0
     hostname: kafka
     restart: always
-    ports:
-      - '9093:9093'
     env_file:
       - ./envs/kafka.env
     networks:
       - ates-network
+    ports:
+      - "9093:9093"
     healthcheck:
       test: [ "CMD", "bash", "-c", "unset", "JMX_PORT", ";", "/opt/bitnami/kafka/bin/kafka-topics.sh", "--bootstrap-server", "127.0.0.1:9002", "--list" ]
       interval: 10s
@@ -35,18 +35,15 @@ services:
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    ports:
-      - 8090:8080
     depends_on:
       - kafka
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-#      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry:8085
-#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
-#      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
     networks:
       - ates-network
+    ports:
+      - "8090:8080"
 
   auth-prepare:
     build:
@@ -67,38 +64,6 @@ services:
     networks:
       - ates-network
 
-  auth:
-    build:
-      context: ../../services/auth
-      dockerfile: Dockerfile
-      target: app
-    container_name: 'auth'
-    env_file:
-      - envs/auth.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      auth-prepare:
-        condition: service_completed_successfully
-      employees:
-        condition: service_healthy
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
-      interval: 5s
-      retries: 10
-      start_period: 10s
-      timeout: 3s
-
   employees-prepare:
     build:
       context: ../../services/employees
@@ -117,36 +82,6 @@ services:
       - npm:/home/node/.npm
     networks:
       - ates-network
-
-  employees:
-    build:
-      context: ../../services/employees
-      dockerfile: Dockerfile
-      target: app
-    container_name: 'employees'
-    env_file:
-      - envs/employees.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      employees-prepare:
-        condition: service_completed_successfully
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
-    healthcheck:
-      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
-      interval: 5s
-      retries: 10
-      start_period: 10s
-      timeout: 3s
-    ports:
-      - "8081:8080"
 
   tasks-prepare:
     build:
@@ -167,37 +102,103 @@ services:
     networks:
       - ates-network
 
-  tasks:
-    build:
-      context: ../../services/tasks
-      dockerfile: Dockerfile
-      target: app
-    container_name: 'tasks'
-    env_file:
-      - envs/tasks.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      employees:
-        condition: service_healthy
-      tasks-prepare:
-        condition: service_completed_successfully
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
-    healthcheck:
-      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
-      interval: 5s
-      retries: 10
-      start_period: 10s
-      timeout: 3s
-    ports:
-      - "8082:8080"
+#  auth:
+#    build:
+#      context: ../../services/auth
+#      dockerfile: Dockerfile
+#      target: app
+#    container_name: 'auth'
+#    env_file:
+#      - envs/auth.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#      auth-prepare:
+#        condition: service_completed_successfully
+#      employees:
+#        condition: service_healthy
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
+#    ports:
+#      - "8080:8080"
+#    healthcheck:
+#      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+#      interval: 5s
+#      retries: 10
+#      start_period: 10s
+#      timeout: 3s
+#
+#  employees:
+#    build:
+#      context: ../../services/employees
+#      dockerfile: Dockerfile
+#      target: app
+#    container_name: 'employees'
+#    env_file:
+#      - envs/employees.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#      employees-prepare:
+#        condition: service_completed_successfully
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
+#    healthcheck:
+#      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+#      interval: 5s
+#      retries: 10
+#      start_period: 10s
+#      timeout: 3s
+#    ports:
+#      - "8081:8080"
+#
+#  tasks:
+#    build:
+#      context: ../../services/tasks
+#      dockerfile: Dockerfile
+#      target: app
+#    container_name: 'tasks'
+#    env_file:
+#      - envs/tasks.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#      employees:
+#        condition: service_healthy
+#      tasks-prepare:
+#        condition: service_completed_successfully
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
+#    healthcheck:
+#      test: wget --no-verbose --timeout=2 --spider http://localhost:8080/check/health || exit 1
+#      interval: 5s
+#      retries: 10
+#      start_period: 10s
+#      timeout: 3s
+#    ports:
+#      - "8082:8080"
+
+
+
+
 
 #  service-template-prepare:
 #    build:

@@ -31,7 +31,11 @@
     "test:build": "cd test/docker && docker-compose build",
     "test:cleanup": "cd test/docker && docker-compose down --remove-orphans",
     "test:prepare": "npm run test:build && cd test/docker && docker-compose up -d",
-    "test:run": "jest --config ./test/integration/jest.integration.json --verbose --colors --coverage --runInBand"
+    "test:run": "jest --config ./test/integration/jest.integration.json --verbose --colors --coverage --runInBand",
+    "start": "npm run start:auth & npm run start:employee & npm run start:tasks",
+    "start:auth": "cd services/auth && npm run start",
+    "start:employee": "cd services/employees && npm run start",
+    "start:tasks": "cd services/tasks && npm run start"
   },
   "dependencies": {
   },

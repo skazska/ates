@@ -52,9 +52,14 @@ export class DbService {
     return this._knex.transaction();
   }
 
-  protected q(trx?: Knex.Transaction): Knex.QueryBuilder {
+  protected q<Rec extends object, Res = Rec[]>(
+    trx?: Knex.Transaction<Rec, Res>,
+  ): Knex.QueryBuilder<Rec, Res> {
     return trx
       ? trx.withSchema(this.schemaName)
-      : this._knex().withSchema(this.schemaName);
+      : (this._knex().withSchema(this.schemaName) as Knex.QueryBuilder<
+          Rec,
+          Res
+        >);
   }
 }

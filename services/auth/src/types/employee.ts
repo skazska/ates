@@ -19,7 +19,7 @@ export class EmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
+  @IsEnum(['admin', 'employee', 'manager'])
   role!: string;
 
   @IsDefined()

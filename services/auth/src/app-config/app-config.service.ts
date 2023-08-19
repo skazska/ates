@@ -4,6 +4,7 @@ import * as assert from 'assert';
 
 interface EnvConfig {
   dbUrl: string;
+  httpPort: number;
   kafkaBrokers: string[];
   kafkaRetry: {
     initialRetryTime: number;
@@ -19,9 +20,13 @@ export class AppConfigService {
 
   constructor(private configService: ConfigService) {
     this.config = {
-      dbUrl: this.configService.get<string>('DB_URL', ''),
+      dbUrl: this.configService.get<string>(
+        'DB_URL',
+        'postgres://test:pass@localhost:5432/test',
+      ),
+      httpPort: this.configService.get<number>('HTTP_PORT', 8080),
       kafkaBrokers: this.configService
-        .get<string>('KAFKA_BROKERS', '')
+        .get<string>('KAFKA_BROKERS', 'localhost:9093')
         .split(';'),
       kafkaRetry: {
         initialRetryTime: 500,
@@ -37,6 +42,10 @@ export class AppConfigService {
 
   public get dbUrl(): EnvConfig['dbUrl'] {
     return this.config.dbUrl;
+  }
+
+  public get httpPort(): EnvConfig['httpPort'] {
+    return this.config.httpPort;
   }
 
   public get kafkaBrokers(): EnvConfig['kafkaBrokers'] {

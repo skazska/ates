@@ -19,7 +19,7 @@ export class EmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
+  @IsEnum(['admin', 'employee', 'manager'])
   role!: string;
 
   @IsDefined()
@@ -41,7 +41,7 @@ export class NewEmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
+  @IsEnum(['admin', 'employee', 'manager'])
   role!: string;
 }
 
@@ -58,7 +58,7 @@ export class UpdateEmployeeDTO {
 
   @IsDefined()
   @IsNotEmpty()
-  @IsEnum(['manager', 'employee'])
+  @IsEnum(['admin', 'employee', 'manager'])
   role?: string;
 
   @IsDefined()

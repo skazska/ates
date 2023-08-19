@@ -6,7 +6,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { ValidationPipe } from '@nestjs/common/pipes';
+import { ValidationPipe } from '@nestjs/common';
 
 export async function bootstrap(): Promise<void> {
   console.log('bootstrap employees');
@@ -24,6 +24,7 @@ export async function bootstrap(): Promise<void> {
     options: {
       client: {
         brokers: config.kafkaBrokers,
+        groupId: config.serviceName,
         clientId: config.serviceName,
         retry: config.kafkaRetry,
       },
@@ -38,7 +39,7 @@ export async function bootstrap(): Promise<void> {
   await app.startAllMicroservices();
   await app.init();
 
-  await app.listen(8080, '0.0.0.0', (err, address) => {
+  await app.listen(config.httpPort, '0.0.0.0', (err, address) => {
     if (err) console.error(err);
 
     console.log('Microservice is listening', address);

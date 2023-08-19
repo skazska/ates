@@ -39,7 +39,7 @@ export async function bootstrap(): Promise<void> {
   await app.startAllMicroservices();
   await app.init();
 
-  await app.listen(8080, '0.0.0.0', (err, address) => {
+  await app.listen(config.httpPort, '0.0.0.0', (err, address) => {
     if (err) console.error(err);
 
     console.log('Microservice is listening', address);
