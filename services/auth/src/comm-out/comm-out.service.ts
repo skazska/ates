@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { LoginDTO } from '../types/login';
 import { Admin } from 'kafkajs';
 
 @Injectable()
@@ -11,21 +12,23 @@ export class CommOutService {
     @Inject('KAFKA_ADMIN') private admin: Admin,
   ) {}
 
-  public created(payload: string): void {
+  public created(payload: LoginDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'created',
       payload,
     });
   }
 
-  public deleted(payload: string): void {
+  public deleted(payload: LoginDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'deleted',
       payload,
     });
   }
 
-  public updated(payload: string): void {
+  public updated(payload: LoginDTO): void {
+    console.log(`CommOutService.cud(${JSON.stringify(payload)})`);
+
     this.kafkaClient.emit(this.cudTopic, {
       action: 'changed',
       payload,

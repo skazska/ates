@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
+// import { EmployeeDTO } from '../types/employee';
 
 @Injectable()
 export class CommOutCmdService {
@@ -10,6 +11,13 @@ export class CommOutCmdService {
     @Inject('KAFKA_CLIENT') protected kafkaClient: ClientKafka,
     @Inject('KAFKA_ADMIN') private admin: Admin,
   ) {}
+
+  // public created(payload: EmployeeDTO): void {
+  //   this.kafkaClient.emit(this.topic, {
+  //     action: 'created',
+  //     payload,
+  //   });
+  // }
 
   public async createTopics(): Promise<void> {
     const { admin, topic } = this;

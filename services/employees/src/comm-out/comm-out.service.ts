@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { EmployeeDTO } from '../types/employee';
 import { Admin } from 'kafkajs';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class CommOutService {
     @Inject('KAFKA_ADMIN') private admin: Admin,
   ) {}
 
-  public created(payload: string): void {
+  public created(payload: EmployeeDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'created',
       payload,
@@ -25,7 +26,7 @@ export class CommOutService {
     });
   }
 
-  public updated(payload: string): void {
+  public updated(payload: EmployeeDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'changed',
       payload,
@@ -43,14 +44,10 @@ export class CommOutService {
     const topics = toCreate.filter((t) => !existingTopics.includes(t));
 
     if (topics.length > 0) {
-      const success = await admin.createTopics({
+      await admin.createTopics({
         topics: topics.map((t) => ({ topic: t })),
         waitForLeaders: true,
       });
-
-      if (!success) {
-        throw new Error('Failed to create topics');
-      }
 
       console.log('Topics created', topics);
     }
