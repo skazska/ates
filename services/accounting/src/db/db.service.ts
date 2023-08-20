@@ -28,14 +28,36 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
-    await schema.dropTableIfExists('accounting');
 
-    await schema.createTable('accounting', (qb) => {
-      qb.increments('id');
-      qb.string('name');
+    await schema.dropTableIfExists('tasks');
+
+    await schema.createTable('tasks', (qb) => {
+      qb.uuid('assignee').notNullable();
+      qb.text('description').notNullable();
+      qb.string('status').notNullable();
+      qb.string('title').notNullable();
+      qb.decimal('reward', 9, 2);
+      qb.decimal('fee', 9, 2);
+      qb.uuid('uid').notNullable();
     });
 
-    console.log('table created', this.schemaName);
+    await schema.dropTableIfExists('employees');
+
+    await schema.createTable('employees', (qb) => {
+      qb.decimal('balance', 9, 2);
+      qb.string('name').notNullable();
+      qb.string('role').notNullable();
+      qb.uuid('uid').primary().notNullable();
+    });
+
+    await schema.dropTableIfExists(this.table);
+
+    await schema.createTable(this.table, (qb) => {
+      qb.string('employee').notNullable();
+      qb.string('type').notNullable();
+      qb.decimal('amount', 9, 2);
+      qb.uuid('uid').primary().notNullable();
+    });
   }
 
   public async tRun<X>(fn: (trx: Knex.Transaction) => Promise<X>): Promise<X> {
