@@ -3,6 +3,7 @@ import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
 import { TaskDTO } from '../types/task';
 import { classToPlain } from '@nestjs/class-transformer';
+import { cudValidator } from '../types/get-json-checker';
 
 @Injectable()
 export class CommOutService {
@@ -59,6 +60,12 @@ export class CommOutService {
   }
 
   private getEventData(payload: TaskDTO): Record<string, unknown> {
-    return classToPlain(payload);
+    const result = classToPlain(payload);
+
+    if (!cudValidator(result)) {
+      throw new Error(JSON.stringify(cudValidator.errors));
+    }
+
+    return result;
   }
 }

@@ -1,0 +1,28 @@
+{
+  "title": "Task CUD",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "assignee": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["assigned", "completed"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": ["assignee", "description", "status", "title", "uuid"],
+  "additionalProperties": false
+}

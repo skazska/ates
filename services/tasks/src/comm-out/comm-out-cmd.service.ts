@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
 import { TaskDTO } from '../types/task';
+import { changedValidator } from '../types/get-json-checker';
 
 @Injectable()
 export class CommOutCmdService {
@@ -44,12 +45,18 @@ export class CommOutCmdService {
   }
 
   private getEventData(task: TaskDTO): Record<string, unknown> {
-    return {
+    const result = {
       uid: task.uid,
       title: task.title,
       description: task.description,
       status: task.status,
       assignee: task.assignee,
     };
+
+    if (!changedValidator(result)) {
+      throw new Error(JSON.stringify(changedValidator.errors));
+    }
+
+    return result;
   }
 }

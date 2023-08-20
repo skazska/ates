@@ -1,0 +1,22 @@
+{
+  "title": "Task changed",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "assignee": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["assigned", "completed"]
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    }
+  },
+  "required": ["uuid", "assignee", "status"],
+  "additionalProperties": false
+}
