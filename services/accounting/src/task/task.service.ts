@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { EmployeeCudDTO } from '../types/employee';
-import { SyncEmployeeDbService } from '../db/sync-employee.db.service';
-import { employeeCudValidator } from '../types/get-json-checker';
+import { TaskCudDTO } from '../types/task';
+import { taskCudValidator } from '../types/get-json-checker';
+import { TaskDbService } from '../db/task.db.service';
 
 @Injectable()
-export class EmployeeService {
-  constructor(private db: SyncEmployeeDbService) {}
+export class TaskService {
+  constructor(private db: TaskDbService) {}
 
-  public async sync(dto: EmployeeCudDTO): Promise<void> {
-    if (!employeeCudValidator(dto)) {
-      throw new Error(JSON.stringify(employeeCudValidator.errors));
+  public async sync(dto: TaskCudDTO): Promise<void> {
+    if (!taskCudValidator(dto)) {
+      throw new Error(JSON.stringify(taskCudValidator.errors));
     }
 
     const { action, payload } = dto;

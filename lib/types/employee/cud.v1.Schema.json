@@ -4,22 +4,34 @@
 
   "type": "object",
   "properties": {
-    "email": {
+    "action": {
       "type": "string",
-      "format": "email"
+      "enum": ["create", "update", "delete"]
     },
-    "name": {
-      "type": "string"
+    "payload": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "manager", "user"]
+        },
+        "uid": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["email", "name", "role", "uid"],
+      "additionalProperties": false
     },
-    "role": {
-      "type": "string",
-      "enum": ["admin", "manager", "user"]
-    },
-    "uid": {
-      "type": "string",
-      "format": "uuid"
-    }
+    "required": ["action", "payload"],
+    "additionalProperties": false
   },
-  "required": ["email", "name", "role", "uid"],
-  "additionalProperties": false
-}
+
+},
