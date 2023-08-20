@@ -18,7 +18,7 @@ export class EmployeeDTO {
 }
 
 // employee cud DTO
-export class TaskCudDTO {
+export class EmployeeCudDTO {
   @IsDefined()
   @IsNotEmpty()
   @IsEnum(['created', 'updated', 'deleted'])

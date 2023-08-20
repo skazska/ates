@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
 import employeeCudSchema from '../../../../lib/types/employee/cud.v1.Schema.json';
-import taskCudSchema from '../../../../lib/types/task/cud.v1.Schema.json';
+import taskCudSchema from '../../../../lib/types/task/cud.v2.Schema.json';
 import taskChangedSchema from '../../../../lib/types/task/changed.v1.Schema.json';
 
 const ajv = new Ajv({

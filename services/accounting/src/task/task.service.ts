@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { TaskCudDTO } from '../types/task';
+import {TaskChangedDTO, TaskCudDTO} from '../types/task';
 import { taskCudValidator } from '../types/get-json-checker';
 import { TaskDbService } from '../db/task.db.service';
 
 @Injectable()
 export class TaskService {
   constructor(private db: TaskDbService) {}
-
-
 
   public async sync(dto: TaskCudDTO): Promise<void> {
     if (!taskCudValidator(dto)) {
@@ -32,5 +30,14 @@ export class TaskService {
       default:
         throw new Error(`unknown action: ${action}`);
     }
+  }
+
+  /**
+   * 1. set costs (if not yet)
+   * 2. if status - completed - acount reward to assignee and fee to management
+   * 3. otherwise account fee to assigny and reward to management
+   */
+  public processChange(task: TaskChangedDTO): Promise<void> {
+
   }
 }

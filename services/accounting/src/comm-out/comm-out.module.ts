@@ -34,6 +34,10 @@ const kafkaProvider = {
 @Global()
 @Module({
   exports: [CommOutService, CommOutCmdService],
-  providers: [CommOutService, CommOutCmdService, kafkaProvider],
+  providers: [
+    CommOutService,
+    CommOutCmdService,
+    kafkaProvider,
+  ],
 })
 export class CommOutModule {}

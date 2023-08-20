@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsDefined, IsEnum, IsUUID } from '@nestjs/class-validator';
+import {
+  IsNotEmpty,
+  IsDefined,
+  IsEnum,
+  IsUUID,
+  IsString,
+  Matches,
+} from '@nestjs/class-validator';
 
 // task DTO
 export class TaskDTO {
@@ -9,7 +16,11 @@ export class TaskDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsString()
   description!: string;
+
+  @IsString()
+  jiraId?: string;
 
   @IsDefined()
   @IsNotEmpty()
@@ -18,6 +29,8 @@ export class TaskDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsString()
+  @Matches(/[^[\]]+/)
   title!: string;
 
   @IsDefined()
