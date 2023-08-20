@@ -1,34 +1,36 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
+import { TaskDTO } from '../types/task';
+import { classToPlain } from '@nestjs/class-transformer';
 
 @Injectable()
 export class CommOutService {
-  private cudTopic = 'employees-cud';
+  private cudTopic = 'tasks-cud';
 
   public constructor(
     @Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka,
     @Inject('KAFKA_ADMIN') private admin: Admin,
   ) {}
 
-  public created(payload: string): void {
+  public created(payload: TaskDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'created',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
-  public deleted(payload: string): void {
+  public deleted(payload: TaskDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'deleted',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
-  public updated(payload: string): void {
+  public updated(payload: TaskDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'changed',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
@@ -54,5 +56,9 @@ export class CommOutService {
 
       console.log('Topics created', topics);
     }
+  }
+
+  private getEventData(payload: TaskDTO): Record<string, unknown> {
+    return classToPlain(payload);
   }
 }

@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
+import { TaskDTO } from '../types/task';
 
 @Injectable()
 export class CommOutCmdService {
-  protected topic = 'task';
+  protected topic = 'task-changed';
 
   public constructor(
     @Inject('KAFKA_CLIENT') protected kafkaClient: ClientKafka,
@@ -33,5 +34,22 @@ export class CommOutCmdService {
 
       console.log('Topics created', topics);
     }
+  }
+
+  public changed(task: TaskDTO): void {
+    this.kafkaClient.emit(this.topic, {
+      action: 'changed',
+      payload: this.getEventData(task),
+    });
+  }
+
+  private getEventData(task: TaskDTO): Record<string, unknown> {
+    return {
+      uid: task.uid,
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      assignee: task.assignee,
+    };
   }
 }

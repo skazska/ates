@@ -27,15 +27,21 @@
     "lint:fix": "eslint '*/**/*.ts' --fix --quiet",
     "lint:warns": "eslint '*/**/*.ts' --max-warnings 0",
     "pre-commit": "lint-staged && tsc --noEmit",
+
+    "prepare": "npm run prepare:auth & npm run prepare:employee & npm run prepare:tasks",
+    "prepare:auth": "cd services/auth && ts-node src/prepare/index.ts",
+    "prepare:employee": "cd services/employees && ts-node src/prepare/index.ts",
+    "prepare:tasks": "cd services/tasks && ts-node src/prepare/index.ts",
+
     "test": "npm run test:prepare && npm run test:integration:run && npm run test:cleanup",
     "test:build": "cd test/docker && docker-compose build",
     "test:cleanup": "cd test/docker && docker-compose down --remove-orphans",
     "test:prepare": "npm run test:build && cd test/docker && docker-compose up -d",
     "test:run": "jest --config ./test/integration/jest.integration.json --verbose --colors --coverage --runInBand",
     "start": "npm run start:auth & npm run start:employee & npm run start:tasks",
-    "start:auth": "cd services/auth && npm run start",
-    "start:employee": "cd services/employees && npm run start",
-    "start:tasks": "cd services/tasks && npm run start"
+    "start:auth": "cd services/auth && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/index.ts\"",
+    "start:employee": "cd services/employees && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/index.ts\"",
+    "start:tasks": "cd services/tasks && nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/index.ts\""
   },
   "dependencies": {
   },
@@ -60,7 +66,9 @@
     "knex": "2.5.1",
     "lint-staged": "13.2.2",
     "prettier": "2.8.8",
+    "nodemon": "3.0.1",
     "ts-jest": "29.1.0",
+    "ts-node": "10.9.1",
     "tsc-watch": "6.0.4",
     "tsconfig-paths": "4.2.0",
     "typescript": "5.0.4"

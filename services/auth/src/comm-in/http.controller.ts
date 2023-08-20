@@ -6,9 +6,8 @@ import { Controller, Get } from '@nestjs/common';
  */
 @Controller('check')
 export class HttpController {
-  // eslint-disable-next-line @typescript-eslint/require-await
   @Get('health')
-  public async health(): Promise<string> {
+  public health(): string {
     return 'OK';
   }
 }

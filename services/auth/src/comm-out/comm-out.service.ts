@@ -15,14 +15,14 @@ export class CommOutService {
   public created(payload: LoginDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'created',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
   public deleted(payload: LoginDTO): void {
     this.kafkaClient.emit(this.cudTopic, {
       action: 'deleted',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
@@ -31,7 +31,7 @@ export class CommOutService {
 
     this.kafkaClient.emit(this.cudTopic, {
       action: 'changed',
-      payload,
+      payload: this.getEventData(payload),
     });
   }
 
@@ -57,5 +57,11 @@ export class CommOutService {
 
       console.log('Topics created', topics);
     }
+  }
+
+  private getEventData(payload: LoginDTO): Record<string, unknown> {
+    const { password, ...rest } = payload;
+
+    return rest;
   }
 }

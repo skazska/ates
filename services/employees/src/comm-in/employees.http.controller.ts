@@ -1,15 +1,23 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
+  Put,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { NewEmployeeDTO, EmployeeDTO } from '../types/employee';
+import {
+  NewEmployeeDTO,
+  EmployeeDTO,
+  UpdateEmployeeDTO,
+  DeleteEmployeeDTO,
+} from '../types/employee';
 import { EmployeeService } from '../employee/employee.service';
 import { HttpExceptionFilter } from './exception.filter';
-import { PrivAuthGuard } from './auth-guard';
+import { Roles } from './roles.decorator';
+import { AuthGuard } from './auth-guard';
 
 /**
  * HttpController contains the HTTP endpoints for this service.
@@ -24,14 +32,30 @@ export class EmployeesHttpController {
     console.log('HttpController.constructor()');
   }
 
-  @UseGuards(PrivAuthGuard)
   @Post()
+  @Roles('admin', 'manager')
+  @UseGuards(AuthGuard)
   public async create(@Body() newUser: NewEmployeeDTO): Promise<EmployeeDTO> {
     return this.userService.create(newUser);
   }
 
-  @UseGuards(PrivAuthGuard)
+  @Put()
+  @Roles('admin', 'manager')
+  @UseGuards(AuthGuard)
+  public async update(@Body() user: UpdateEmployeeDTO): Promise<EmployeeDTO> {
+    return this.userService.update(user);
+  }
+
+  @Delete()
+  @Roles('admin', 'manager')
+  @UseGuards(AuthGuard)
+  public async delete(@Body() user: DeleteEmployeeDTO): Promise<EmployeeDTO> {
+    return this.userService.delete(user);
+  }
+
   @Get()
+  @Roles('admin', 'manager')
+  @UseGuards(AuthGuard)
   public async get(): Promise<EmployeeDTO[]> {
     return this.userService.get();
   }

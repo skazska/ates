@@ -5,6 +5,7 @@ import {
   NewEmployeeDTO,
   EmployeeDTO,
   UpdateEmployeeDTO,
+  DeleteEmployeeDTO,
 } from '../types/employee';
 import { plainToClass } from '@nestjs/class-transformer';
 
@@ -14,7 +15,7 @@ export class DbService {
 
   private schemaName = 'employees';
 
-  private employees = 'employees';
+  private table = 'employees';
 
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
@@ -34,9 +35,9 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
-    await schema.dropTableIfExists(this.employees);
+    await schema.dropTableIfExists(this.table);
 
-    await schema.createTable(this.employees, (qb) => {
+    await schema.createTable(this.table, (qb) => {
       qb.uuid('uid')
         .primary()
         .notNullable()
@@ -51,44 +52,47 @@ export class DbService {
 
   public async createEmployee(
     employeeDTO: NewEmployeeDTO,
+    trx?: Knex.Transaction,
   ): Promise<EmployeeDTO> {
     const rec: Record<string, unknown> = { ...employeeDTO };
     delete rec.password;
 
-    const result = await this.q()
-      .insert(employeeDTO)
-      .into(this.employees)
-      .returning('*');
+    const result = await this.q(trx).insert(rec).returning('*');
 
     return plainToClass(EmployeeDTO, result[0]);
   }
 
   public async updateEmployee(
     employeeDTO: UpdateEmployeeDTO,
+    trx?: Knex.Transaction,
   ): Promise<EmployeeDTO> {
     const { uid, ...rec } = employeeDTO;
 
-    const result = await this.q()
+    const result = await this.q(trx)
       .update(rec)
-      .from(this.employees)
       .where('uid', uid)
       .returning('*');
 
     return plainToClass(EmployeeDTO, result[0]);
   }
 
-  public async deleteEmployee(uid: string): Promise<EmployeeDTO> {
-    const result = await this.q()
+  public async deleteEmployee(
+    employeeDto: DeleteEmployeeDTO,
+    trx?: Knex.Transaction,
+  ): Promise<EmployeeDTO> {
+    const result = await this.q(trx)
       .delete()
-      .from(this.employees)
-      .where('uid', uid)
+      .where('uid', employeeDto.uid)
       .returning('*');
 
     return plainToClass(EmployeeDTO, result[0]);
   }
 
-  public async getEmployee(uid?: string): Promise<EmployeeDTO[]> {
-    const q = this.q().select(['email', 'name', 'uid']).from(this.employees);
+  public async getEmployee(
+    uid?: string,
+    trx?: Knex.Transaction,
+  ): Promise<EmployeeDTO[]> {
+    const q = this.q(trx).select(['email', 'name', 'uid']);
 
     if (uid) {
       void q.where('uid', uid);
@@ -100,10 +104,10 @@ export class DbService {
     return plainToClass(EmployeeDTO, result);
   }
 
-  public async tRun<X>(fn: () => Promise<X>): Promise<X> {
+  public async tRun<X>(fn: (trx: Knex.Transaction) => Promise<X>): Promise<X> {
     const trx = await this.trx();
     try {
-      const result = await fn();
+      const result = await fn(trx);
       await trx.commit();
       return result;
     } catch (err) {
@@ -118,12 +122,14 @@ export class DbService {
 
   protected q<Rec extends object, Res = Rec[]>(
     trx?: Knex.Transaction<Rec, Res>,
+    table?: string,
   ): Knex.QueryBuilder<Rec, Res> {
     return trx
-      ? trx.withSchema(this.schemaName)
-      : (this._knex().withSchema(this.schemaName) as Knex.QueryBuilder<
-          Rec,
-          Res
-        >);
+      ? (trx(table || this.table).withSchema(
+          this.schemaName,
+        ) as Knex.QueryBuilder<Rec, Res>)
+      : (this._knex(table || this.table).withSchema(
+          this.schemaName,
+        ) as Knex.QueryBuilder<Rec, Res>);
   }
 }

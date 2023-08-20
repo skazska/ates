@@ -6,6 +6,9 @@ export class LoginDTO {
   @IsNotEmpty()
   email!: string;
 
+  @IsUUID()
+  employee?: string;
+
   @IsDefined()
   @IsNotEmpty()
   name!: string;
@@ -23,4 +26,54 @@ export class LoginDTO {
   @IsNotEmpty()
   @IsUUID()
   uid!: string;
+}
+
+// create login DTO
+export class CreateLoginDTO {
+  @IsDefined()
+  @IsNotEmpty()
+  email!: string;
+
+  @IsUUID()
+  employee?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  name!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  password!: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsEnum(['admin', 'manager', 'user'])
+  role!: string;
+}
+
+export class UpdateLoginDTO {
+  @IsDefined()
+  @IsNotEmpty()
+  email!: string;
+
+  @IsDefined()
+  employee!: string;
+
+  @IsNotEmpty()
+  name?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  password?: string;
+
+  @IsDefined()
+  @IsNotEmpty()
+  @IsEnum(['admin', 'manager', 'user'])
+  role!: string;
+}
+
+export class DeleteLoginDTO {
+  @IsDefined()
+  @IsNotEmpty()
+  employee!: string;
 }

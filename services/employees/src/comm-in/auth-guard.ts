@@ -5,64 +5,46 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { getTokenFromHttp } from '../utils/auth';
+import { Token } from '../../../../lib/types/jwt';
+import { Reflector } from '@nestjs/core';
+import { FastifyRequest } from 'fastify';
 
+@Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private roles: string[]) {}
+  constructor(private jwtService: JwtService, private reflector: Reflector) {}
 
   public canActivate(context: ExecutionContext): boolean {
-    const token = getTokenFromHttp(context.switchToHttp().getRequest());
+    const roles = this.reflector.getAllAndMerge<string[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    const token = this.getTokenFromContext(context);
     if (!token) {
       throw new UnauthorizedException();
     }
     try {
-      const payload = this.jwtService.verify<{
-        sup: string;
-        username: string;
-        role: string;
-      }>(token);
+      const payload = this.jwtService.verify<Token>(token);
 
-      if (!this.roles.includes(payload.role)) {
+      if (!roles.includes(payload.role)) {
         throw new UnauthorizedException();
       }
+
+      this.setTokenToHttp(context, payload);
     } catch {
       throw new UnauthorizedException();
     }
+
     return true;
   }
-}
 
-@Injectable()
-export class AdminAuthGuard extends AuthGuard implements CanActivate {
-  constructor(jwtService: JwtService) {
-    super(jwtService, ['admin']);
+  private getTokenFromContext(context: ExecutionContext): string | undefined {
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
-}
 
-@Injectable()
-export class ManagerAuthGuard extends AuthGuard implements CanActivate {
-  constructor(jwtService: JwtService) {
-    super(jwtService, ['manager']);
-  }
-}
-
-@Injectable()
-export class EmployeeAuthGuard extends AuthGuard implements CanActivate {
-  constructor(jwtService: JwtService) {
-    super(jwtService, ['employee']);
-  }
-}
-
-@Injectable()
-export class AllAuthGuard extends AuthGuard implements CanActivate {
-  constructor(jwtService: JwtService) {
-    super(jwtService, ['admin', 'employee', 'manager']);
-  }
-}
-
-@Injectable()
-export class PrivAuthGuard extends AuthGuard implements CanActivate {
-  constructor(jwtService: JwtService) {
-    super(jwtService, ['admin', 'manager']);
+  private setTokenToHttp(context: ExecutionContext, data: Token): void {
+    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    request.headers['x-token-data'] = JSON.stringify(data);
   }
 }

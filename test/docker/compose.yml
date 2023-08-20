@@ -45,62 +45,62 @@ services:
     ports:
       - "8090:8080"
 
-  auth-prepare:
-    build:
-      context: ../../services/auth
-      dockerfile: Dockerfile
-      target: prepare
-    env_file:
-      - envs/auth.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
+#  auth-prepare:
+#    build:
+#      context: ../../services/auth
+#      dockerfile: Dockerfile
+#      target: prepare
+#    env_file:
+#      - envs/auth.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
 
-  employees-prepare:
-    build:
-      context: ../../services/employees
-      dockerfile: Dockerfile
-      target: prepare
-    env_file:
-      - envs/employees.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
+#  employees-prepare:
+#    build:
+#      context: ../../services/employees
+#      dockerfile: Dockerfile
+#      target: prepare
+#    env_file:
+#      - envs/employees.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
 
-  tasks-prepare:
-    build:
-      context: ../../services/tasks
-      dockerfile: Dockerfile
-      target: prepare
-    env_file:
-      - envs/tasks.env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-    tmpfs:
-      - /tmp
-    volumes:
-      - npm:/home/node/.npm
-    networks:
-      - ates-network
+#  tasks-prepare:
+#    build:
+#      context: ../../services/tasks
+#      dockerfile: Dockerfile
+#      target: prepare
+#    env_file:
+#      - envs/tasks.env
+#    depends_on:
+#      postgresql:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_healthy
+#    tmpfs:
+#      - /tmp
+#    volumes:
+#      - npm:/home/node/.npm
+#    networks:
+#      - ates-network
 
 #  auth:
 #    build:

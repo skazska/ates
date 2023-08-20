@@ -19,7 +19,7 @@ overrides: [
     files: ['*.ts'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
-      include: ['src/**/*.ts', 'test/**/*.ts', 'typings/**/*.ts'],
+      include: ['lib/**/*.ts', 'services/**/*.ts', 'test/**/*.ts', 'typings/**/*.ts'],
       project: './tsconfig.json',
     },
     rules: {

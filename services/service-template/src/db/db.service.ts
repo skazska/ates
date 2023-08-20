@@ -8,6 +8,8 @@ export class DbService {
 
   private schemaName = 'service-template';
 
+  private table = 'service-template';
+
   constructor(private config: AppConfigService) {
     this._knex = knex({ client: 'pg', connection: this.config.dbUrl });
   }
@@ -36,10 +38,10 @@ export class DbService {
     console.log('table created', this.schemaName);
   }
 
-  public async tRun<X>(fn: () => Promise<X>): Promise<X> {
+  public async tRun<X>(fn: (trx: Knex.Transaction) => Promise<X>): Promise<X> {
     const trx = await this.trx();
     try {
-      const result = await fn();
+      const result = await fn(trx);
       await trx.commit();
       return result;
     } catch (err) {
@@ -54,12 +56,14 @@ export class DbService {
 
   protected q<Rec extends object, Res = Rec[]>(
     trx?: Knex.Transaction<Rec, Res>,
+    table?: string,
   ): Knex.QueryBuilder<Rec, Res> {
     return trx
-      ? trx.withSchema(this.schemaName)
-      : (this._knex().withSchema(this.schemaName) as Knex.QueryBuilder<
-          Rec,
-          Res
-        >);
+      ? (trx(table || this.table).withSchema(
+          this.schemaName,
+        ) as Knex.QueryBuilder<Rec, Res>)
+      : (this._knex(table || this.table).withSchema(
+          this.schemaName,
+        ) as Knex.QueryBuilder<Rec, Res>);
   }
 }

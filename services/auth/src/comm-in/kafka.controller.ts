@@ -5,9 +5,7 @@ import { EmployeeCudDTO } from '../types/employee';
 
 @Controller()
 export class KafkaController {
-  public constructor(private login: LoginService) {
-    console.log('KafkaController created');
-  }
+  public constructor(private login: LoginService) {}
 
   /**
    * process new employee cud events
@@ -22,6 +20,12 @@ export class KafkaController {
     switch (action) {
       case 'created':
         await this.login.create(employee);
+        break;
+      case 'updated':
+        await this.login.update(employee);
+        break;
+      case 'deleted':
+        await this.login.delete(employee);
         break;
       default:
         throw new Error(`unknown action: ${payload.action}`);
