@@ -54,11 +54,15 @@ export class TaskCudDTO {
 export class TaskChangedDTO {
   @IsNotEmpty()
   @IsUUID()
-  assignee?: string;
+  assignee!: string;
+
+  @IsString()
+  @IsUUID()
+  manager?: string;
 
   @IsNotEmpty()
   @IsEnum(['assigned', 'completed'])
-  status?: string;
+  status!: string;
 
   @IsDefined()
   @IsNotEmpty()

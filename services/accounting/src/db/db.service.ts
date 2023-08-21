@@ -54,13 +54,79 @@ export class DbService {
 
     await schema.createTable(this.table, (qb) => {
       qb.decimal('amount', 9, 2);
+      qb.date('date').notNullable().defaultTo(this._knex.fn.now());
       qb.uuid('employee').references('uid').inTable('employees');
+      qb.uuid('task').references('uid').inTable('tasks');
       qb.string('type').notNullable();
       qb.uuid('uid')
         .primary()
         .notNullable()
         .defaultTo(this._knex.raw('uuid_generate_v4()'));
     });
+  }
+
+  public async getEmployees(trx?: Knex.Transaction): Promise<string[]> {
+    const rows = await this.q<{ uid: string }>(trx, 'employees').select('uid');
+
+    return rows.map((row) => row.uid);
+  }
+
+  public async transaction(
+    record: { employee: string; task?: string; type: string; amount: number },
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    await this.q(trx).insert(record);
+  }
+
+  public async getBalance(
+    employee: string,
+    trx?: Knex.Transaction,
+  ): Promise<number> {
+    const rows = await this.q<{ balance: number }>(trx, 'employees')
+      .select('balance')
+      .where('uid', employee);
+
+    return rows[0]?.balance || 0;
+  }
+
+  public async getAccounting(
+    employee?: string,
+    trx?: Knex.Transaction,
+  ): Promise<
+    {
+      amount: number;
+      date: Date;
+      employee: string;
+      type: string;
+      task?: string;
+    }[]
+  > {
+    const q = this.q<{
+      amount: number;
+      date: Date;
+      employee: string;
+      type: string;
+      task?: string;
+    }>(trx)
+      .select('*')
+      .orderBy('date', 'desc');
+
+    if (employee) {
+      void q.where('employee', employee);
+    }
+
+    return q;
+  }
+
+  public async setBalance(
+    employee: string,
+    balance: number,
+    trx?: Knex.Transaction,
+  ): Promise<void> {
+    await this.q(trx, 'employees')
+      .insert({ uid: employee, balance })
+      .onConflict('uid')
+      .merge({ balance });
   }
 
   public async tRun<X>(fn: (trx: Knex.Transaction) => Promise<X>): Promise<X> {

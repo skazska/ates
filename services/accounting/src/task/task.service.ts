@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { TaskChangedDTO, TaskCudDTO } from '../types/task';
 import { taskCudValidator } from '../types/get-json-checker';
 import { TaskDbService } from '../db/task.db.service';
+import { CommOutCmdService } from '../comm-out/comm-out-cmd.service';
 
 @Injectable()
 export class TaskService {
-  constructor(private db: TaskDbService) {}
+  constructor(private db: TaskDbService, private commOut: CommOutCmdService) {}
 
   public async sync(dto: TaskCudDTO): Promise<void> {
     if (!taskCudValidator(dto)) {
@@ -48,6 +49,8 @@ export class TaskService {
     const reward = Math.random() * 10 + 10;
 
     await this.db.setPrice(task.uid, fee, reward);
+
+    this.commOut.priceSet(task.uid, fee, reward);
 
     return { fee, reward };
   }

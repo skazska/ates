@@ -34,7 +34,7 @@ export class TaskService {
     return task;
   }
 
-  public async assignTasks(): Promise<void> {
+  public async assignTasks(manager?: string): Promise<void> {
     const employeeUids = await this.getEmployeeUids();
     const tasks = await this.db.getTasks();
 
@@ -45,7 +45,7 @@ export class TaskService {
 
       await this.db.updateTask(task);
 
-      this.commOutCmd.changed(task);
+      this.commOutCmd.changed(task, manager);
     }
   }
 

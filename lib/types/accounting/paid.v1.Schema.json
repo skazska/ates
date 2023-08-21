@@ -1,0 +1,17 @@
+{
+  "title": "Payment accounted for employee",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "employee": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "amount": {
+      "type": "number"
+    }
+  },
+  "required": ["task", "fee", "reward"],
+  "additionalProperties": false
+}

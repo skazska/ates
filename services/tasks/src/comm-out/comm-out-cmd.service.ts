@@ -37,20 +37,21 @@ export class CommOutCmdService {
     }
   }
 
-  public changed(task: TaskDTO): void {
-    this.kafkaClient.emit(this.topic, {
-      action: 'changed',
-      payload: this.getEventData(task),
-    });
+  public changed(task: TaskDTO, manager?: string): void {
+    this.kafkaClient.emit(this.topic, this.getEventData(task, manager));
   }
 
-  private getEventData(task: TaskDTO): Record<string, unknown> {
+  private getEventData(
+    task: TaskDTO,
+    manager?: string,
+  ): Record<string, unknown> {
     const result = {
       uid: task.uid,
       title: task.title,
       description: task.description,
       status: task.status,
       assignee: task.assignee,
+      manager,
     };
 
     if (!changedValidator(result)) {
