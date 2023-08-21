@@ -62,6 +62,12 @@ export class CommOutService {
   private getEventData(payload: TaskDTO): Record<string, unknown> {
     const result = classToPlain(payload);
 
+    if (payload.jiraId) {
+      result.title = `${payload.description}${
+        payload.jiraId ? ` - [${payload.jiraId}]` : ''
+      }`;
+    }
+
     if (!cudValidator(result)) {
       throw new Error(JSON.stringify(cudValidator.errors));
     }

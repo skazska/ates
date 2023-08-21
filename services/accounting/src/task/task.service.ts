@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {TaskChangedDTO, TaskCudDTO} from '../types/task';
+import { TaskChangedDTO, TaskCudDTO } from '../types/task';
 import { taskCudValidator } from '../types/get-json-checker';
 import { TaskDbService } from '../db/task.db.service';
 
@@ -33,11 +33,22 @@ export class TaskService {
   }
 
   /**
-   * 1. set costs (if not yet)
-   * 2. if status - completed - acount reward to assignee and fee to management
-   * 3. otherwise account fee to assigny and reward to management
+   * fee = rand(20..40), reward = rand(10..20)
    */
-  public processChange(task: TaskChangedDTO): Promise<void> {
+  public async getPrice(
+    task: TaskChangedDTO,
+  ): Promise<{ fee: number; reward: number }> {
+    const price = await this.db.getPrice(task.uid);
 
+    if (price) {
+      return price;
+    }
+
+    const fee = Math.random() * 20 + 20;
+    const reward = Math.random() * 10 + 10;
+
+    await this.db.setPrice(task.uid, fee, reward);
+
+    return { fee, reward };
   }
 }

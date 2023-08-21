@@ -32,31 +32,34 @@ export class DbService {
     await schema.dropTableIfExists('tasks');
 
     await schema.createTable('tasks', (qb) => {
-      qb.uuid('assignee').notNullable();
-      qb.text('description').notNullable();
-      qb.string('status').notNullable();
-      qb.string('title').notNullable();
+      qb.uuid('assignee');
+      qb.text('description');
+      qb.string('status');
+      qb.string('title');
       qb.decimal('reward', 9, 2);
       qb.decimal('fee', 9, 2);
-      qb.uuid('uid').notNullable();
+      qb.uuid('uid').notNullable().primary();
     });
 
     await schema.dropTableIfExists('employees');
 
     await schema.createTable('employees', (qb) => {
-      qb.decimal('balance', 9, 2);
+      qb.decimal('balance', 9, 2).notNullable().defaultTo(0);
       qb.string('name').notNullable();
       qb.string('role').notNullable();
-      qb.uuid('uid').primary().notNullable();
+      qb.uuid('uid').primary().notNullable().primary();
     });
 
     await schema.dropTableIfExists(this.table);
 
     await schema.createTable(this.table, (qb) => {
-      qb.string('employee').notNullable();
-      qb.string('type').notNullable();
       qb.decimal('amount', 9, 2);
-      qb.uuid('uid').primary().notNullable();
+      qb.uuid('employee').references('uid').inTable('employees');
+      qb.string('type').notNullable();
+      qb.uuid('uid')
+        .primary()
+        .notNullable()
+        .defaultTo(this._knex.raw('uuid_generate_v4()'));
     });
   }
 

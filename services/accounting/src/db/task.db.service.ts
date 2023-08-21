@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../app-config/app-config.service';
 import knex, { Knex } from 'knex';
 import { TaskDTO } from '../types/task';
+import { classToPlain } from '@nestjs/class-transformer';
 
 @Injectable()
 export class TaskDbService {
@@ -14,7 +15,15 @@ export class TaskDbService {
   }
 
   public async create(task: TaskDTO): Promise<void> {
-    await this.q().insert(task);
+    const rec = classToPlain(task);
+    rec.description = `${task.description}${
+      task.jiraId ? ` - [${task.jiraId}]` : ''
+    }`;
+
+    await this.q()
+      .insert(task)
+      .onConflict('uid')
+      .merge(['assignee', 'description', 'status', 'title']);
   }
 
   public async update(task: TaskDTO): Promise<void> {
@@ -26,8 +35,25 @@ export class TaskDbService {
     await this.q().delete().where({ uid: task.uid });
   }
 
-  public async setPrice(task: string, price: number): Promise<void> {
-    await this.q().insert({ task, price });
+  public async setPrice(
+    uid: string,
+    fee: number,
+    reward: number,
+  ): Promise<void> {
+    await this.q()
+      .insert({ uid, fee, reward })
+      .onConflict('uid')
+      .merge(['fee', 'reward']);
+  }
+
+  public async getPrice(
+    uid: string,
+  ): Promise<{ fee: number; reward: number } | undefined> {
+    const [price] = await this.q<{ fee: number; reward: number }>()
+      .select('fee', 'reward')
+      .where('uid', uid);
+
+    return price;
   }
 
   protected q<Rec extends object, Res = Rec[]>(): Knex.QueryBuilder<Rec, Res> {

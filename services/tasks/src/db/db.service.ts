@@ -37,7 +37,7 @@ export class DbService {
     await schema.createTable('employees', (qb) => {
       qb.string('name').notNullable();
       qb.string('role').notNullable();
-      qb.uuid('uid').primary().notNullable();
+      qb.uuid('uid').primary().notNullable().primary();
     });
 
     await schema.createTable('tasks', (qb) => {

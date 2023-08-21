@@ -3,13 +3,15 @@ import { TaskService } from '../task/task.service';
 import { EmployeeService } from '../employee/employee.service';
 import { EventPattern, Payload, Transport } from '@nestjs/microservices';
 import { EmployeeCudDTO } from '../types/employee';
-import {TaskChangedDTO, TaskCudDTO} from '../types/task';
+import { TaskChangedDTO, TaskCudDTO } from '../types/task';
+import { AccountService } from '../account/account.service';
 
 @Controller()
 export class KafkaController {
   public constructor(
     private employee: EmployeeService,
     private task: TaskService,
+    private account: AccountService,
   ) {}
 
   /**
@@ -33,6 +35,6 @@ export class KafkaController {
    */
   @EventPattern('tasks-changed', Transport.KAFKA)
   public async taskProcess(@Payload() payload: TaskChangedDTO): Promise<void> {
-    await this.task.processChange(payload);
+    await this.account.processChange(payload);
   }
 }

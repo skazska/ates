@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DbService } from '../db/db.service';
-import { CommOutService } from '../comm-out/comm-out.service';
 import { CompleteTaskDTO, NewTaskDTO, TaskDTO } from '../types/task';
 import { CommOutCmdService } from '../comm-out/comm-out-cmd.service';
 import { Token } from '../../../../lib/types/jwt';
+import { CommOutServiceV2 } from '../comm-out/comm-out.service_v2';
 
 @Injectable()
 export class TaskService {
   constructor(
     private db: DbService,
-    private commOut: CommOutService,
+    private commOut: CommOutServiceV2,
     private commOutCmd: CommOutCmdService,
   ) {}
 
