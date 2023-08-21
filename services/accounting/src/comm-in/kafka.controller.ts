@@ -1,12 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseFilters } from '@nestjs/common';
 import { TaskService } from '../task/task.service';
 import { EmployeeService } from '../employee/employee.service';
 import { EventPattern, Payload, Transport } from '@nestjs/microservices';
 import { EmployeeCudDTO } from '../types/employee';
 import { TaskChangedDTO, TaskCudDTO } from '../types/task';
 import { AccountService } from '../account/account.service';
+import { KafkaExceptionFilter } from './kafka.exception.filter';
 
 @Controller()
+@UseFilters(KafkaExceptionFilter)
 export class KafkaController {
   public constructor(
     private employee: EmployeeService,
