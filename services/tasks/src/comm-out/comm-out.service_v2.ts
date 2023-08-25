@@ -3,15 +3,17 @@ import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
 import { TaskDTO } from '../types/task';
 import { classToPlain } from '@nestjs/class-transformer';
-import { cudValidator } from '../types/get-json-checker';
+import { cudValidator, cudValidatorV2 } from '../types/get-json-checker';
+import {CommOutService} from "./comm-out.service";
 
 @Injectable()
-export class CommOutService {
-  private cudTopic = 'tasks-cud';
+export class CommOutServiceV2 {
+  private cudTopic = 'accounting-cud-v2';
 
   public constructor(
     @Inject('KAFKA_CLIENT') private kafkaClient: ClientKafka,
     @Inject('KAFKA_ADMIN') private admin: Admin,
+    private backward: CommOutService,
   ) {}
 
   public created(payload: TaskDTO): void {
@@ -19,6 +21,8 @@ export class CommOutService {
       action: 'created',
       payload: this.getEventData(payload),
     });
+
+    this.backward.created(payload);
   }
 
   public deleted(payload: TaskDTO): void {
@@ -26,6 +30,7 @@ export class CommOutService {
       action: 'deleted',
       payload: this.getEventData(payload),
     });
+    this.backward.deleted(payload);
   }
 
   public updated(payload: TaskDTO): void {
@@ -33,6 +38,7 @@ export class CommOutService {
       action: 'changed',
       payload: this.getEventData(payload),
     });
+    this.backward.updated(payload);
   }
 
   public async createTopics(): Promise<void> {
@@ -62,13 +68,7 @@ export class CommOutService {
   private getEventData(payload: TaskDTO): Record<string, unknown> {
     const result = classToPlain(payload);
 
-    if (payload.jiraId) {
-      result.title = `${payload.description}${
-        payload.jiraId ? ` - [${payload.jiraId}]` : ''
-      }`;
-    }
-
-    if (!cudValidator(result)) {
+    if (!cudValidatorV2(result)) {
       throw new Error(JSON.stringify(cudValidator.errors));
     }
 

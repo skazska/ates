@@ -8,6 +8,7 @@ import {
 } from '@nestjs/microservices';
 import { CommOutCmdService } from './comm-out-cmd.service';
 import { Admin, Kafka } from 'kafkajs';
+import { CommOutServiceV2 } from './comm-out.service_v2';
 
 const kafkaProvider = {
   inject: [AppConfigService],
@@ -51,9 +52,10 @@ const kafkaAdminProvider = {
 
 @Global()
 @Module({
-  exports: [CommOutService, CommOutCmdService],
+  exports: [CommOutService, CommOutCmdService, CommOutServiceV2],
   providers: [
     CommOutService,
+    CommOutServiceV2,
     CommOutCmdService,
     kafkaProvider,
     kafkaAdminProvider,

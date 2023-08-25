@@ -1,0 +1,37 @@
+{
+  "title": "Employee CUD",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["create", "update", "delete"]
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "name": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "manager", "user"]
+        },
+        "uid": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["email", "name", "role", "uid"],
+      "additionalProperties": false
+    },
+    "required": ["action", "payload"],
+    "additionalProperties": false
+  },
+
+},

@@ -1,0 +1,20 @@
+{
+  "title": "Price set for task",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "task": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "fee": {
+      "type": "number"
+    },
+    "reward": {
+      "type": "number"
+    }
+  },
+  "required": ["task", "fee", "reward"],
+  "additionalProperties": false
+}

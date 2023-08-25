@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EmployeeCudDTO } from '../types/employee';
-import { SyncEmployeeDbService } from '../db/sync-employee.db.service';
+import { EmployeeDbService } from '../db/employee.db.service';
 import { employeeCudValidator } from '../types/get-json-checker';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private db: SyncEmployeeDbService) {}
+  constructor(private db: EmployeeDbService) {}
 
   public async sync(dto: EmployeeCudDTO): Promise<void> {
     if (!employeeCudValidator(dto)) {

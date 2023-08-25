@@ -42,8 +42,12 @@ export class BoardHttpController {
   @Post('tasks/reassign')
   @Roles('admin', 'manager')
   @UseGuards(AuthGuard)
-  public async reassign(): Promise<string> {
-    await this.tasks.assignTasks();
+  public async reassign(
+    @Headers('x-token-data') tokenData: string,
+  ): Promise<string> {
+    const token = JSON.parse(tokenData) as Token;
+    const manager = token.role === 'manager' ? token.employee : undefined;
+    await this.tasks.assignTasks(manager);
 
     return 'OK';
   }

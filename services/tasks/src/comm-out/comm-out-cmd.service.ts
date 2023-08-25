@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Admin } from 'kafkajs';
 import { TaskDTO } from '../types/task';
+import { changedValidator } from '../types/get-json-checker';
 
 @Injectable()
 export class CommOutCmdService {
@@ -36,20 +37,27 @@ export class CommOutCmdService {
     }
   }
 
-  public changed(task: TaskDTO): void {
-    this.kafkaClient.emit(this.topic, {
-      action: 'changed',
-      payload: this.getEventData(task),
-    });
+  public changed(task: TaskDTO, manager?: string): void {
+    this.kafkaClient.emit(this.topic, this.getEventData(task, manager));
   }
 
-  private getEventData(task: TaskDTO): Record<string, unknown> {
-    return {
+  private getEventData(
+    task: TaskDTO,
+    manager?: string,
+  ): Record<string, unknown> {
+    const result = {
       uid: task.uid,
       title: task.title,
       description: task.description,
       status: task.status,
       assignee: task.assignee,
+      manager,
     };
+
+    if (!changedValidator(result)) {
+      throw new Error(JSON.stringify(changedValidator.errors));
+    }
+
+    return result;
   }
 }

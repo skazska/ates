@@ -1,0 +1,10 @@
+{
+  "title": "Accounting day closed",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+  },
+  "required": [],
+  "additionalProperties": false
+}

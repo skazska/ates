@@ -3,6 +3,8 @@ import { ClientKafka } from '@nestjs/microservices';
 import { EmployeeDTO } from '../types/employee';
 import { Admin } from 'kafkajs';
 import { classToPlain } from '@nestjs/class-transformer';
+import { cudValidator } from '../types/get-json-checker';
+import { rethrow } from '@nestjs/core/helpers/rethrow';
 
 @Injectable()
 export class CommOutService {
@@ -55,6 +57,12 @@ export class CommOutService {
   }
 
   private getEventData(payload: EmployeeDTO): Record<string, unknown> {
-    return classToPlain(payload);
+    const result = classToPlain(payload);
+
+    if (!cudValidator(result)) {
+      throw new Error(JSON.stringify(cudValidator.errors));
+    }
+
+    return result;
   }
 }

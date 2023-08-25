@@ -31,12 +31,13 @@ export class DbService {
     console.log('schema', this.schemaName);
 
     schema = schema.withSchema(this.schemaName);
+    await schema.dropTableIfExists('employees');
     await schema.dropTableIfExists('tasks');
 
     await schema.createTable('employees', (qb) => {
       qb.string('name').notNullable();
       qb.string('role').notNullable();
-      qb.uuid('uid').primary().notNullable();
+      qb.uuid('uid').primary().notNullable().primary();
     });
 
     await schema.createTable('tasks', (qb) => {

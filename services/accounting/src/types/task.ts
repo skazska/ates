@@ -16,6 +16,7 @@ export class TaskDTO {
 
   @IsDefined()
   @IsNotEmpty()
+  @IsString()
   description!: string;
 
   @IsString()
@@ -38,38 +39,31 @@ export class TaskDTO {
   uid!: string;
 }
 
-export class NewTaskDTO {
+// employee cud DTO
+export class TaskCudDTO {
   @IsDefined()
   @IsNotEmpty()
-  description!: string;
+  @IsEnum(['created', 'updated', 'deleted'])
+  action!: string;
 
   @IsDefined()
   @IsNotEmpty()
-  title!: string;
+  payload!: TaskDTO;
 }
 
-export class UpdateTaskDTO {
+export class TaskChangedDTO {
   @IsNotEmpty()
   @IsUUID()
-  assignee?: string;
+  assignee!: string;
 
-  @IsNotEmpty()
-  description?: string;
+  @IsString()
+  @IsUUID()
+  manager?: string;
 
   @IsNotEmpty()
   @IsEnum(['assigned', 'completed'])
-  status?: string;
+  status!: string;
 
-  @IsNotEmpty()
-  title?: string;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @IsUUID()
-  uid!: string;
-}
-
-export class CompleteTaskDTO {
   @IsDefined()
   @IsNotEmpty()
   @IsUUID()

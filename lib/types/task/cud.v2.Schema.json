@@ -1,0 +1,42 @@
+{
+  "title": "Task CUD",
+  "version": "v1",
+
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["create", "update", "delete"]
+    },
+    "payload": {
+      "type": "object",
+      "properties": {
+        "assignee": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": {
+          "type": "string"
+        },
+        "jira_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["assigned", "completed"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "uuid": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "required": ["assignee", "description", "status", "title", "uuid"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["action", "payload"],
+  "additionalProperties": false
+}
